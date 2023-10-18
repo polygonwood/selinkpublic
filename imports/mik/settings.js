@@ -1,0 +1,9 @@
+// export const serverDomain = 'mik-demo.ebo-enterprises.com';
+// export const serverURL = `https://${serverDomain}`;
+// export const secretPassword = '2BrugseZotten!';
+// export const serverDomain = 'nmso-acc.mik.mil.be';
+// export const serverURL = `https://${serverDomain}`;
+// export const secretPassword = 'UNVBPTOKNXZUQPCO-Z3H537W';
+export const serverDomain = 'mik-dev.ebo-enterprises.com';
+export const serverURL = `https://${serverDomain}`;
+export const secretPassword = 'mik';

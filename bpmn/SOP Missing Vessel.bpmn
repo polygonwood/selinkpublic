@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1luxs5x" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="MissingVessel" name="Missing Vessel" isExecutable="true">
+    <bpmn:startEvent id="Start_MissingVessel" name="Missing Vessel">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= info.CallInfo" target="CallInfo" />
+          <zeebe:output source="= info.entityId" target="entityId" />
+          <zeebe:output source="= info.StartEvent" target="StartEvent" />
+          <zeebe:output source="=&#34;incident&#34;" target="entityDefinitionName" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0hp8xdk</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_04hkqhz" messageRef="Message_34ffj4f" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0hp8xdk" sourceRef="Start_MissingVessel" targetRef="Sub_Intake_MissingVessel" />
+    <bpmn:callActivity id="Sub_Intake_MissingVessel" name="Intake Missing Vessel">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Intake_MissingVessel" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0hp8xdk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zym277</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="End_MissingVessel">
+      <bpmn:incoming>Flow_1qppu36</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0zym277" sourceRef="Sub_Intake_MissingVessel" targetRef="Sub_Analysis_MissingVessel" />
+    <bpmn:sequenceFlow id="Flow_1f1tvkp" sourceRef="Sub_Analysis_MissingVessel" targetRef="Sub_Action_MissingVessel" />
+    <bpmn:callActivity id="Sub_Analysis_MissingVessel" name="Analysis Missing Vessel">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Analysis_MissingVessel" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0zym277</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f1tvkp</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1qppu36" sourceRef="Sub_Closure_MissingVessel" targetRef="End_MissingVessel" />
+    <bpmn:callActivity id="Sub_Closure_MissingVessel" name="Closure Missing Vessel">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Closure_MissingVessel" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rokpp5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qppu36</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0rokpp5" sourceRef="Sub_Action_MissingVessel" targetRef="Sub_Closure_MissingVessel" />
+    <bpmn:callActivity id="Sub_Action_MissingVessel" name="Action Missing Vessel">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Action_MissingVessel" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1f1tvkp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rokpp5</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmn:message id="Message_34ffj4f" name="MISSINGVESSEL" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="MissingVessel">
+      <bpmndi:BPMNEdge id="Flow_1qppu36_di" bpmnElement="Flow_1qppu36">
+        <di:waypoint x="940" y="117" />
+        <di:waypoint x="1012" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f1tvkp_di" bpmnElement="Flow_1f1tvkp">
+        <di:waypoint x="570" y="117" />
+        <di:waypoint x="660" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zym277_di" bpmnElement="Flow_0zym277">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="470" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hp8xdk_di" bpmnElement="Flow_0hp8xdk">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rokpp5_di" bpmnElement="Flow_0rokpp5">
+        <di:waypoint x="760" y="117" />
+        <di:waypoint x="840" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_10qrokh_di" bpmnElement="Start_MissingVessel" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="161" y="142" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g8s96d_di" bpmnElement="Sub_Intake_MissingVessel">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0y5oh1x_di" bpmnElement="End_MissingVessel" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1012" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04qg03e_di" bpmnElement="Sub_Closure_MissingVessel">
+        <dc:Bounds x="840" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1j85brv_di" bpmnElement="Sub_Action_MissingVessel">
+        <dc:Bounds x="660" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cvf3ri_di" bpmnElement="Sub_Analysis_MissingVessel">
+        <dc:Bounds x="470" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

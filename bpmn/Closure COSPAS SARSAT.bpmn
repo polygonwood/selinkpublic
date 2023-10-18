@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1cypwpd" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Closure_COSPAS_SARSAT" name="Closure COSPAS SARSAT" isExecutable="true">
+    <bpmn:startEvent id="Start_Closure_COSPAS_SARSAT">
+      <bpmn:outgoing>Flow_14xruta</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="End_Closure_COSPAS_SARSAT">
+      <bpmn:incoming>Flow_14xruta</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_14xruta" sourceRef="Start_Closure_COSPAS_SARSAT" targetRef="End_Closure_COSPAS_SARSAT" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Closure_COSPAS_SARSAT">
+      <bpmndi:BPMNEdge id="Flow_14xruta_di" bpmnElement="Flow_14xruta">
+        <di:waypoint x="215" y="97" />
+        <di:waypoint x="442" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_Closure_COSPAS_SARSAT" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="79" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0bwbfpa_di" bpmnElement="End_Closure_COSPAS_SARSAT" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="442" y="79" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

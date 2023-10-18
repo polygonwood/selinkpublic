@@ -1,0 +1,52 @@
+<head>
+  <title>mrcc</title>
+</head>
+
+<body>
+  <h1>MRCC PoC</h1>
+  {{> MOB}}
+</body>
+
+<template name="MOB">
+  <p>
+  <textarea id="accesstoken" name="Access token" rows="4" cols="50">{{token}}</textarea>
+  </p>
+  <button id="RESET">Reset</button><br>
+  <button id="TESTUNIT">Test Unit</button><br>
+  <button id="COSPAS" class="messageButton">COSPAS SARSAT Event</button>
+  <button id="EMERGENCY">Emergency Call</button>  
+  <p>
+    <button id="RHS">RHS Enters AOI</button>
+    <button id="RHSGONE">RHS Leaves AOI</button>
+  </p>
+  {{#if key}}
+  <p>Correlation key {{key}}</p>
+  <button id="positionUpdate">Update Position</button>
+  <button id="endActionMOB">End Action MOB</button>
+  {{/if}}
+  <p></p>
+  {{#each form in holdedForms}}
+  <button id="{{form._id}}" class="formButton">Release {{form.name}}</button>
+  {{/each}}
+  <p></p>
+  {{#each sop in sops}}
+  {{> SOP data=sop}}
+  {{/each}}
+</template>
+
+<template name="SOP">
+  <div>
+    SOP {{sop}}
+    {{#each form in forms}}
+    {{> FORM data=form}}
+    {{/each}}
+    <p></p>
+  </div>
+</template>
+
+<template name="FORM">
+  <div id="form">
+    Form {{form}}<br>
+    <pre>{{{data}}}</pre>
+  </div>
+</template>

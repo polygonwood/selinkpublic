@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1mfy0a3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.5.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+  <bpmn:process id="Process_Sinterklaas" name="Sinterklaas" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1smve6i" sourceRef="StartEvent_1" targetRef="Form_input" />
+    <bpmn:sequenceFlow id="Flow_1b9ekxl" sourceRef="Form_input" targetRef="Gateway_1i96x85" />
+    <bpmn:endEvent id="Event_stop" name="Stop">
+      <bpmn:incoming>Flow_1g80jnp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1g80jnp" sourceRef="Form_output" targetRef="Event_stop" />
+    <bpmn:userTask id="Form_input" name="Input form">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="SintInput" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=inputvartext1" target="inputvartext1" />
+          <zeebe:output source="=counter + 1" target="counter" />
+          <zeebe:output source="=richTextMailBody" target="richTextMailBody" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="procedureId" value="SINT" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1smve6i</bpmn:incoming>
+      <bpmn:incoming>Flow_0pibur7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b9ekxl</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="StartEvent_1" name="Sint Test">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=entityDefinitionName" target="entityDefinitionName" />
+          <zeebe:output source="=entityId" target="entityId" />
+          <zeebe:output source="=msgDate" target="startEvent" />
+          <zeebe:output source="=uuid" target="processId" />
+          <zeebe:output source="=0" target="counter" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1smve6i</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1hsaqy9" messageRef="Message_3i3slgv" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="Form_output" name="Output form">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="SintOutput" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="procedureId" value="SINT" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0019i0k</bpmn:incoming>
+      <bpmn:outgoing>Flow_1g80jnp</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0djv40j" sourceRef="Activity_globalvar" targetRef="Gateway_1eu82o7" />
+    <bpmn:serviceTask id="Activity_globalvar" name="Sint update">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="setGlobalVariables" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=entityId" target="entityId" />
+          <zeebe:input source="=entityDefinitionName" target="entityDefinitionName" />
+          <zeebe:input source="={&#34;global1&#34;:inputvartext1,&#10;&#34;datenow&#34;:now()}" target="variables" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14cmgwx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0djv40j</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_17gmamq" sourceRef="Gateway_1ub18k7" targetRef="Gateway_0oeizhb" />
+    <bpmn:sequenceFlow id="Flow_0pibur7" sourceRef="Gateway_1ub18k7" targetRef="Form_input" />
+    <bpmn:parallelGateway id="Gateway_1ub18k7">
+      <bpmn:incoming>Flow_1n6bu0v</bpmn:incoming>
+      <bpmn:outgoing>Flow_17gmamq</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0pibur7</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_0oeizhb">
+      <bpmn:incoming>Flow_17gmamq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0019i0k</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0019i0k" sourceRef="Gateway_0oeizhb" targetRef="Form_output">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=counter = 1</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_14cmgwx" sourceRef="Activity_GQL_resources" targetRef="Activity_globalvar" />
+    <bpmn:serviceTask id="Activity_GQL_resources" name="Available resources">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="graphql" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;AVAILABILITIES&#34;" target="query" />
+          <zeebe:output source="=result" target="result" />
+          <zeebe:output source="=result" target="cpvtable" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0y25pg4</bpmn:incoming>
+      <bpmn:outgoing>Flow_14cmgwx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0y25pg4" sourceRef="Gateway_1i96x85" targetRef="Activity_GQL_resources" />
+    <bpmn:parallelGateway id="Gateway_1i96x85">
+      <bpmn:incoming>Flow_1b9ekxl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0y25pg4</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0qxm13c</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1n6bu0v" sourceRef="Gateway_1eu82o7" targetRef="Gateway_1ub18k7" />
+    <bpmn:parallelGateway id="Gateway_1eu82o7">
+      <bpmn:incoming>Flow_0djv40j</bpmn:incoming>
+      <bpmn:incoming>Flow_0m607zw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1n6bu0v</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0qxm13c" sourceRef="Gateway_1i96x85" targetRef="Activity_send_mail" />
+    <bpmn:sequenceFlow id="Flow_0m607zw" sourceRef="Activity_send_mail" targetRef="Gateway_1eu82o7" />
+    <bpmn:serviceTask id="Activity_send_mail" name="Send rich text mail">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-mail" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;Rich text test&#34;" target="subject" />
+          <zeebe:input source="=&#34;ronny.dewaele@ebo-enterprises.com&#34;" target="to" />
+          <zeebe:input source="=richTextMailBody" target="body" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qxm13c</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m607zw</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:message id="Message_3i3slgv" name="start/topic/SINT" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Sinterklaas">
+      <bpmndi:BPMNShape id="Event_1oqoked_di" bpmnElement="Event_stop" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1302" y="239" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1309" y="282" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rj65as_di" bpmnElement="Form_input">
+        <dc:Bounds x="270" y="217" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0w5cfhy_di" bpmnElement="StartEvent_1" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="239" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="177" y="282" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07jwgks_di" bpmnElement="Form_output">
+        <dc:Bounds x="1040" y="217" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0oeizhb_di" bpmnElement="Gateway_0oeizhb" isMarkerVisible="true">
+        <dc:Bounds x="935" y="232" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wxnmxl_di" bpmnElement="Gateway_1ub18k7">
+        <dc:Bounds x="855" y="232" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16cwwnw_di" bpmnElement="Activity_globalvar">
+        <dc:Bounds x="670" y="217" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16codzm_di" bpmnElement="Activity_GQL_resources">
+        <dc:Bounds x="520" y="217" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0oqiku2_di" bpmnElement="Gateway_1i96x85">
+        <dc:Bounds x="425" y="232" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_06sjybu_di" bpmnElement="Gateway_1eu82o7">
+        <dc:Bounds x="785" y="232" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nbb0wt_di" bpmnElement="Activity_send_mail">
+        <dc:Bounds x="590" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1g80jnp_di" bpmnElement="Flow_1g80jnp">
+        <di:waypoint x="1140" y="257" />
+        <di:waypoint x="1302" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1smve6i_di" bpmnElement="Flow_1smve6i">
+        <di:waypoint x="215" y="257" />
+        <di:waypoint x="270" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pibur7_di" bpmnElement="Flow_0pibur7">
+        <di:waypoint x="880" y="282" />
+        <di:waypoint x="880" y="390" />
+        <di:waypoint x="320" y="390" />
+        <di:waypoint x="320" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b9ekxl_di" bpmnElement="Flow_1b9ekxl">
+        <di:waypoint x="370" y="257" />
+        <di:waypoint x="425" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0019i0k_di" bpmnElement="Flow_0019i0k">
+        <di:waypoint x="985" y="257" />
+        <di:waypoint x="1040" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17gmamq_di" bpmnElement="Flow_17gmamq">
+        <di:waypoint x="905" y="257" />
+        <di:waypoint x="935" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n6bu0v_di" bpmnElement="Flow_1n6bu0v">
+        <di:waypoint x="835" y="257" />
+        <di:waypoint x="855" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14cmgwx_di" bpmnElement="Flow_14cmgwx">
+        <di:waypoint x="620" y="257" />
+        <di:waypoint x="670" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0djv40j_di" bpmnElement="Flow_0djv40j">
+        <di:waypoint x="770" y="257" />
+        <di:waypoint x="785" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y25pg4_di" bpmnElement="Flow_0y25pg4">
+        <di:waypoint x="475" y="257" />
+        <di:waypoint x="520" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qxm13c_di" bpmnElement="Flow_0qxm13c">
+        <di:waypoint x="450" y="232" />
+        <di:waypoint x="450" y="120" />
+        <di:waypoint x="590" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m607zw_di" bpmnElement="Flow_0m607zw">
+        <di:waypoint x="690" y="120" />
+        <di:waypoint x="810" y="120" />
+        <di:waypoint x="810" y="232" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

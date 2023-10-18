@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1rx9fo7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0">
+  <bpmn:process id="Process_0qifb9d" name="Test new forms" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_SOP241" name="SOP241">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= msgDate" target="msgDate" />
+          <zeebe:output source="= entityId" target="entityId" />
+          <zeebe:output source="= uuid" target="uuid" />
+          <zeebe:output source="=entityDefinitionName" target="entityDefinitionName" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_07j6zl7</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1k2qczv" messageRef="Message_1eqieft" />
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_Stop">
+      <bpmn:incoming>Flow_1cq9agl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_07j6zl7" sourceRef="StartEvent_SOP241" targetRef="ActivityPrint" />
+    <bpmn:sequenceFlow id="Flow_07ejquo" sourceRef="ActivityPrint" targetRef="FormRdwForm" />
+    <bpmn:serviceTask id="ActivityPrint" name="Print">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="PrintData" retries="1" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="msgDate" value="1" />
+          <zeebe:header key="entityId" value="1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07j6zl7</bpmn:incoming>
+      <bpmn:outgoing>Flow_07ejquo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1cq9agl" sourceRef="FormRdwForm" targetRef="Event_Stop" />
+    <bpmn:userTask id="FormRdwForm" name="rdwForm">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="rdwForm" />
+          <zeebe:header key="procedureId" value="SOP241" />
+        </zeebe:taskHeaders>
+        <zeebe:formDefinition formKey="rdwForm" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=uuid" target="uuid" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07ejquo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cq9agl</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmn:message id="Message_08ok885" name="raised/type/OAI_AND_RHS" />
+  <bpmn:message id="Message_1eqieft" name="invalid" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0qifb9d">
+      <bpmndi:BPMNEdge id="Flow_1cq9agl_di" bpmnElement="Flow_1cq9agl">
+        <di:waypoint x="670" y="120" />
+        <di:waypoint x="822" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07ejquo_di" bpmnElement="Flow_07ejquo">
+        <di:waypoint x="440" y="120" />
+        <di:waypoint x="570" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07j6zl7_di" bpmnElement="Flow_07j6zl7">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="340" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1ech7p7_di" bpmnElement="StartEvent_SOP241" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="149" y="145" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04ze4ns_di" bpmnElement="Event_Stop" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="822" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rat97x_di" bpmnElement="ActivityPrint">
+        <dc:Bounds x="340" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_105tahd_di" bpmnElement="FormRdwForm">
+        <dc:Bounds x="570" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

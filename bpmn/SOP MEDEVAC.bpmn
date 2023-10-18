@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0d8p0rn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="MEDEVAC" name="Medical Evacuation" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1147bt3" sourceRef="Start_MEDEVAC" targetRef="Form_MedEvac" />
+    <bpmn:endEvent id="End_MedEvac">
+      <bpmn:incoming>Flow_1v1ok8h</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1v1ok8h" sourceRef="Form_MedEvac" targetRef="End_MedEvac" />
+    <bpmn:userTask id="Form_MedEvac" name="MedEvac">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="MedEvac" />
+          <zeebe:header key="procedureId" value="MEDEVAC" />
+          <zeebe:header key="hold" value="true" />
+          <zeebe:header key="show" value="entityId" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;This is the start of the MEDEVAC procedure&#34;" target="instruction" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1147bt3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1v1ok8h</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="Start_MEDEVAC">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=entityDefinitionName" target="entityDefinitionName" />
+          <zeebe:output source="= entityId" target="entityId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1147bt3</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0m8ttxt" messageRef="Message_36dr30p" />
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_36dr30p" name="start/topic/MEDEVAC" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="MEDEVAC">
+      <bpmndi:BPMNEdge id="Flow_1v1ok8h_di" bpmnElement="Flow_1v1ok8h">
+        <di:waypoint x="450" y="117" />
+        <di:waypoint x="582" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1147bt3_di" bpmnElement="Flow_1147bt3">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="350" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1li2t6i_di" bpmnElement="End_MedEvac" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="582" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1trowex_di" bpmnElement="Form_MedEvac">
+        <dc:Bounds x="350" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1jnthsw_di" bpmnElement="Start_MEDEVAC" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

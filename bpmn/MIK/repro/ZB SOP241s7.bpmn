@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_1v1a0zb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
+  <bpmn:message id="Message_0fxzu67" name="SOP241-ABNLCASE">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=alarmId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_031ciww" name="raised/type/OAI_AND_RHS" />
+  <bpmn:collaboration id="SOP241_">
+    <bpmn:participant id="SOP241_main_MIKDEFOperator" name="ROLE MIK DEF Operator" processRef="SOP241" />
+  </bpmn:collaboration>
+  <bpmn:process id="SOP241" name="SOP241 Hybrid ship" isExecutable="true">
+    <bpmn:startEvent id="Start_SOP241" name="COI passes outer warning line">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= alarmId" target="alarmId" />
+          <zeebe:output source="=false" target="ABNLCase" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0kzmft6</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1ly6oy9" messageRef="Message_031ciww" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0kzmft6" sourceRef="Start_SOP241" targetRef="Task_SOP241_CreateIncident" />
+    <bpmn:subProcess id="SubSOP241Body">
+      <bpmn:incoming>Flow_0dcw4y2</bpmn:incoming>
+      <bpmn:startEvent id="Event_0jf0dgz">
+        <bpmn:outgoing>Flow_1unfhie</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:userTask id="Form_SOP241_ClearPosition" name="Clear Position">
+        <bpmn:extensionElements>
+          <zeebe:taskHeaders>
+            <zeebe:header key="assemblyCode" value="SOP241ClearPositionVessel" />
+            <zeebe:header key="procedureId" value="GENERAL" />
+            <zeebe:header key="hold" value="true" />
+            <zeebe:header key="show" value="leaveMessage" />
+          </zeebe:taskHeaders>
+          <zeebe:ioMapping>
+            <zeebe:input source="={&#34;message&#34;:&#34;CloseIncident&#34;,&#34;correlationKey&#34;:entityId}" target="leaveMessage" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0y542of</bpmn:incoming>
+        <bpmn:outgoing>Flow_085538l</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:endEvent id="Stop_ClearPosition">
+        <bpmn:incoming>Flow_085538l</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:callActivity id="Sub_SOP241_ReportIncident" name="Report Incident">
+        <bpmn:extensionElements>
+          <zeebe:calledElement processId="SOP241_Report" propagateAllChildVariables="true" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0xdy4qn</bpmn:incoming>
+        <bpmn:outgoing>Flow_06hllyc</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:endEvent id="StopEvent_SOP241Report">
+        <bpmn:incoming>Flow_06hllyc</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:parallelGateway id="Gateway_0dai9bb">
+        <bpmn:incoming>Flow_1unfhie</bpmn:incoming>
+        <bpmn:outgoing>Flow_0y542of</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0pe1rk3</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:intermediateCatchEvent id="Event_SOP241_COIENtersEEZ" name="COI enters EEZ">
+        <bpmn:incoming>Flow_0pe1rk3</bpmn:incoming>
+        <bpmn:outgoing>Flow_0xdy4qn</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1obgrbb" messageRef="Message_0n1z1wc" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="Flow_0y542of" sourceRef="Gateway_0dai9bb" targetRef="Form_SOP241_ClearPosition" />
+      <bpmn:sequenceFlow id="Flow_06hllyc" sourceRef="Sub_SOP241_ReportIncident" targetRef="StopEvent_SOP241Report" />
+      <bpmn:sequenceFlow id="Flow_0xdy4qn" sourceRef="Event_SOP241_COIENtersEEZ" targetRef="Sub_SOP241_ReportIncident" />
+      <bpmn:subProcess id="InterruptingCloseIncident" triggeredByEvent="true">
+        <bpmn:startEvent id="Start_CloseIncident" name="Close Incident">
+          <bpmn:outgoing>Flow_18enx8f</bpmn:outgoing>
+          <bpmn:messageEventDefinition id="MessageEventDefinition_07ffhmd" messageRef="Message_2mvhup4" />
+        </bpmn:startEvent>
+        <bpmn:callActivity id="Sub_SOP241_ReportIncident_ManualClose" name="Report Incident">
+          <bpmn:extensionElements>
+            <zeebe:calledElement processId="SOP241_Report" propagateAllChildVariables="true" />
+          </bpmn:extensionElements>
+          <bpmn:incoming>Flow_18enx8f</bpmn:incoming>
+          <bpmn:outgoing>Flow_0u5dv9t</bpmn:outgoing>
+        </bpmn:callActivity>
+        <bpmn:sequenceFlow id="Flow_18enx8f" sourceRef="Start_CloseIncident" targetRef="Sub_SOP241_ReportIncident_ManualClose" />
+        <bpmn:endEvent id="Event_0nlidxk">
+          <bpmn:incoming>Flow_0u5dv9t</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="Flow_0u5dv9t" sourceRef="Sub_SOP241_ReportIncident_ManualClose" targetRef="Event_0nlidxk" />
+      </bpmn:subProcess>
+      <bpmn:sequenceFlow id="Flow_085538l" sourceRef="Form_SOP241_ClearPosition" targetRef="Stop_ClearPosition" />
+      <bpmn:sequenceFlow id="Flow_0pe1rk3" sourceRef="Gateway_0dai9bb" targetRef="Event_SOP241_COIENtersEEZ" />
+      <bpmn:sequenceFlow id="Flow_1unfhie" sourceRef="Event_0jf0dgz" targetRef="Gateway_0dai9bb" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0dcw4y2" sourceRef="Task_SOP241_CreateIncident" targetRef="SubSOP241Body" />
+    <bpmn:serviceTask id="Task_SOP241_CreateIncident" name="Create incident">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="ensure-incident" retries="2" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=entityId" target="entityId" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="topic" value="RHS" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0kzmft6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dcw4y2</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:message id="Message_0n1z1wc" name="raised/type/EEZ_AND_RHS/zone/3">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=&#34;mmsi.&#34;+COI_ID" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1z0bi9r" name="Vessel-Leaves-Zone">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=COI_ID+&#34;RHS_200NM&#34;" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0nuqv9c" name="Vessel-goes-dark">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=COI_ID" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0b9mhbe" name="Vessel-Position-Active">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=COI_ID" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0t0mz87" name="SOP240" />
+  <bpmn:message id="Message_2mvhup4" name="CloseIncident">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=entityId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_3bt3rnn" name="cleared/type/OAI_AND_RHS">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=&#34;mmsi.&#34;+COI_ID" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="SOP241_">
+      <bpmndi:BPMNShape id="Participant_1b0oke2_di" bpmnElement="SOP241_main_MIKDEFOperator" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2100" height="1130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0dcw4y2_di" bpmnElement="Flow_0dcw4y2">
+        <di:waypoint x="510" y="447" />
+        <di:waypoint x="650" y="447" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kzmft6_di" bpmnElement="Flow_0kzmft6">
+        <di:waypoint x="298" y="447" />
+        <di:waypoint x="410" y="447" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1ju9j5r_di" bpmnElement="Start_SOP241" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="262" y="429" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239" y="472" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11jeg7o_di" bpmnElement="SubSOP241Body" isExpanded="true">
+        <dc:Bounds x="650" y="120" width="1550" height="1040" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1unfhie_di" bpmnElement="Flow_1unfhie">
+        <di:waypoint x="738" y="440" />
+        <di:waypoint x="1025" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pe1rk3_di" bpmnElement="Flow_0pe1rk3">
+        <di:waypoint x="1075" y="440" />
+        <di:waypoint x="1242" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_085538l_di" bpmnElement="Flow_085538l">
+        <di:waypoint x="1050" y="583" />
+        <di:waypoint x="1050" y="642" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xdy4qn_di" bpmnElement="Flow_0xdy4qn">
+        <di:waypoint x="1278" y="440" />
+        <di:waypoint x="1470" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06hllyc_di" bpmnElement="Flow_06hllyc">
+        <di:waypoint x="1570" y="440" />
+        <di:waypoint x="1862" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y542of_di" bpmnElement="Flow_0y542of">
+        <di:waypoint x="1050" y="465" />
+        <di:waypoint x="1050" y="503" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0jf0dgz_di" bpmnElement="Event_0jf0dgz" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="702" y="422" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hibffm_di" bpmnElement="Form_SOP241_ClearPosition">
+        <dc:Bounds x="1000" y="503" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1lywemm_di" bpmnElement="Stop_ClearPosition" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1032" y="642" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02hgwfn_di" bpmnElement="Sub_SOP241_ReportIncident">
+        <dc:Bounds x="1470" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nxsqr0_di" bpmnElement="StopEvent_SOP241Report" bioc:stroke="rgb(229, 57, 53)" bioc:fill="rgb(255, 205, 210)">
+        <dc:Bounds x="1862" y="422" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1q8gftt_di" bpmnElement="Gateway_0dai9bb" bioc:stroke="rgb(251, 140, 0)" bioc:fill="rgb(255, 224, 178)">
+        <dc:Bounds x="1025" y="415" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02o24na_di" bpmnElement="Event_SOP241_COIENtersEEZ" bioc:stroke="rgb(142, 36, 170)" bioc:fill="rgb(225, 190, 231)">
+        <dc:Bounds x="1242" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1231" y="466" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0taqonh_di" bpmnElement="InterruptingCloseIncident" isExpanded="true">
+        <dc:Bounds x="1050" y="875" width="490" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0u5dv9t_di" bpmnElement="Flow_0u5dv9t">
+        <di:waypoint x="1310" y="975" />
+        <di:waypoint x="1402" y="975" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18enx8f_di" bpmnElement="Flow_18enx8f">
+        <di:waypoint x="1126" y="975" />
+        <di:waypoint x="1210" y="975" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0cnmgfw_di" bpmnElement="Start_CloseIncident" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1090" y="957" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1074" y="1000" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0numxru_di" bpmnElement="Sub_SOP241_ReportIncident_ManualClose">
+        <dc:Bounds x="1210" y="935" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nlidxk_di" bpmnElement="Event_0nlidxk" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1402" y="957" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15kgdyb_di" bpmnElement="Task_SOP241_CreateIncident">
+        <dc:Bounds x="410" y="407" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

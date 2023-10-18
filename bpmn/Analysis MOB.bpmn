@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_05g2965" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Analysis_MOB" name="Analysis MOB" isExecutable="true">
+    <bpmn:startEvent id="Start_Analysis_MOB">
+      <bpmn:outgoing>Flow_1ky152a</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="End_Analysis_MOB">
+      <bpmn:incoming>Flow_0agfap5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Form_SelectResources_Analysis_MOB" name="Select Resources">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="SelectResources" />
+          <zeebe:header key="show" value="instruction" />
+          <zeebe:header key="output" value="ResourcesSAR" />
+          <zeebe:header key="hold" value="true" />
+          <zeebe:header key="procedureId" value="MOB" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;Select resources for SAR action&#34;" target="instruction" />
+          <zeebe:output source="= [&#34;SAR Heli&#34;,&#34;DAB Vloot&#34;]" target="ResourcesSAR" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ky152a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tv08s0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1gzq29t" sourceRef="Gateway_1ogz0wx" targetRef="Form_SARBriefing_Analysis_MOB" />
+    <bpmn:parallelGateway id="Gateway_1ogz0wx">
+      <bpmn:incoming>Flow_0tv08s0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gzq29t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0p0cogh</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="Task_sendSMS_Analysis_MOB" name="Send SMS HMRCC">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-sms" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="type" value="SARMOB" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;+32475325511&#34;" target="phoneNumber" />
+          <zeebe:input source="=&#34;SAR action started for MOB&#34;" target="message" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0olbbfd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mmepli</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_SendSAR_Analysis_MOB" name="Send SAR Briefing &#38; Tasking">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="SendSAR" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_13rletz</bpmn:incoming>
+      <bpmn:outgoing>Flow_01ksg3i</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_13rletz" sourceRef="Form_SARBriefing_Analysis_MOB" targetRef="Task_SendSAR_Analysis_MOB" />
+    <bpmn:userTask id="Form_SARBriefing_Analysis_MOB" name="SAR Briefing">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="SARBriefing" />
+          <zeebe:header key="hold" value="true" />
+          <zeebe:header key="procedureId" value="MOB" />
+          <zeebe:header key="show" value="instruction" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;Prepare SAR Briefing&#34;" target="instruction" />
+          <zeebe:input source="=ResourcesSAR" target="Resources" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1gzq29t</bpmn:incoming>
+      <bpmn:outgoing>Flow_13rletz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1ky152a" sourceRef="Start_Analysis_MOB" targetRef="Form_SelectResources_Analysis_MOB" />
+    <bpmn:sequenceFlow id="Flow_0tv08s0" sourceRef="Form_SelectResources_Analysis_MOB" targetRef="Gateway_1ogz0wx" />
+    <bpmn:parallelGateway id="Gateway_1vhyy4z">
+      <bpmn:incoming>Flow_01ksg3i</bpmn:incoming>
+      <bpmn:incoming>Flow_1h68wii</bpmn:incoming>
+      <bpmn:outgoing>Flow_0agfap5</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0agfap5" sourceRef="Gateway_1vhyy4z" targetRef="End_Analysis_MOB" />
+    <bpmn:sequenceFlow id="Flow_01ksg3i" sourceRef="Task_SendSAR_Analysis_MOB" targetRef="Gateway_1vhyy4z" />
+    <bpmn:userTask id="Form_SendSMS_Analysis_MOB" name="Send  SMS HMRCC">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="SendSMS" />
+          <zeebe:header key="procedureId" value="MOB" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:output source="=sms" target="sms" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0p0cogh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qh9wyb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0p0cogh" sourceRef="Gateway_1ogz0wx" targetRef="Form_SendSMS_Analysis_MOB" />
+    <bpmn:exclusiveGateway id="Gateway_1iqbawk" default="Flow_07sb73q">
+      <bpmn:incoming>Flow_0qh9wyb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0olbbfd</bpmn:outgoing>
+      <bpmn:outgoing>Flow_07sb73q</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0qh9wyb" sourceRef="Form_SendSMS_Analysis_MOB" targetRef="Gateway_1iqbawk" />
+    <bpmn:sequenceFlow id="Flow_0olbbfd" name="SMS" sourceRef="Gateway_1iqbawk" targetRef="Task_sendSMS_Analysis_MOB">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=sms</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_11akiqw">
+      <bpmn:incoming>Flow_1mmepli</bpmn:incoming>
+      <bpmn:incoming>Flow_07sb73q</bpmn:incoming>
+      <bpmn:incoming>Flow_1a16bf0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h68wii</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1mmepli" sourceRef="Task_sendSMS_Analysis_MOB" targetRef="Gateway_11akiqw" />
+    <bpmn:sequenceFlow id="Flow_1h68wii" sourceRef="Gateway_11akiqw" targetRef="Gateway_1vhyy4z" />
+    <bpmn:sequenceFlow id="Flow_07sb73q" sourceRef="Gateway_1iqbawk" targetRef="Gateway_11akiqw" />
+    <bpmn:boundaryEvent id="Event_0ckkrmq" attachedToRef="Form_SendSMS_Analysis_MOB">
+      <bpmn:outgoing>Flow_1a16bf0</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1t33s05">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1a16bf0" sourceRef="Event_0ckkrmq" targetRef="Gateway_11akiqw" />
+  </bpmn:process>
+  <bpmn:message id="Message_0ahmsdl" name="SARInfo">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=entityId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:error id="Error_0ad86te" name="Error_27hc930" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Analysis_MOB">
+      <bpmndi:BPMNEdge id="Flow_01ksg3i_di" bpmnElement="Flow_01ksg3i">
+        <di:waypoint x="880" y="117" />
+        <di:waypoint x="1115" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0agfap5_di" bpmnElement="Flow_0agfap5">
+        <di:waypoint x="1165" y="117" />
+        <di:waypoint x="1252" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tv08s0_di" bpmnElement="Flow_0tv08s0">
+        <di:waypoint x="420" y="117" />
+        <di:waypoint x="485" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ky152a_di" bpmnElement="Flow_1ky152a">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="320" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13rletz_di" bpmnElement="Flow_13rletz">
+        <di:waypoint x="710" y="117" />
+        <di:waypoint x="780" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gzq29t_di" bpmnElement="Flow_1gzq29t">
+        <di:waypoint x="535" y="117" />
+        <di:waypoint x="610" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p0cogh_di" bpmnElement="Flow_0p0cogh">
+        <di:waypoint x="510" y="142" />
+        <di:waypoint x="510" y="240" />
+        <di:waypoint x="560" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qh9wyb_di" bpmnElement="Flow_0qh9wyb">
+        <di:waypoint x="660" y="240" />
+        <di:waypoint x="725" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0olbbfd_di" bpmnElement="Flow_0olbbfd">
+        <di:waypoint x="775" y="240" />
+        <di:waypoint x="840" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="796" y="222" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mmepli_di" bpmnElement="Flow_1mmepli">
+        <di:waypoint x="940" y="240" />
+        <di:waypoint x="1025" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h68wii_di" bpmnElement="Flow_1h68wii">
+        <di:waypoint x="1075" y="240" />
+        <di:waypoint x="1140" y="240" />
+        <di:waypoint x="1140" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07sb73q_di" bpmnElement="Flow_07sb73q">
+        <di:waypoint x="750" y="265" />
+        <di:waypoint x="750" y="340" />
+        <di:waypoint x="1050" y="340" />
+        <di:waypoint x="1050" y="265" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a16bf0_di" bpmnElement="Flow_1a16bf0">
+        <di:waypoint x="610" y="298" />
+        <di:waypoint x="610" y="390" />
+        <di:waypoint x="1050" y="390" />
+        <di:waypoint x="1050" y="265" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_Analysis_MOB" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wsu20s_di" bpmnElement="Form_SelectResources_Analysis_MOB">
+        <dc:Bounds x="320" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1q7xj7m_di" bpmnElement="Gateway_1ogz0wx" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="485" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c80qcp_di" bpmnElement="Task_SendSAR_Analysis_MOB">
+        <dc:Bounds x="780" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0j971eq_di" bpmnElement="Form_SARBriefing_Analysis_MOB">
+        <dc:Bounds x="610" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0990mk4_di" bpmnElement="Form_SendSMS_Analysis_MOB">
+        <dc:Bounds x="560" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0evfgg1_di" bpmnElement="End_Analysis_MOB" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1252" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_11yiph7_di" bpmnElement="Gateway_1vhyy4z" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="1115" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_11akiqw_di" bpmnElement="Gateway_11akiqw" isMarkerVisible="true" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="1025" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bvvri9_di" bpmnElement="Task_sendSMS_Analysis_MOB">
+        <dc:Bounds x="840" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1iqbawk_di" bpmnElement="Gateway_1iqbawk" isMarkerVisible="true" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="725" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1u5j66e_di" bpmnElement="Event_0ckkrmq" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="592" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

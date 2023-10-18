@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0cb7r0v" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Intake_EmergencyCall" name="Intake Emergency Call" isExecutable="true">
+    <bpmn:startEvent id="Start_Intake_EmergencyCall">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_1ch71y5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1ch71y5" sourceRef="Start_Intake_EmergencyCall" targetRef="Task_CreateIncident_EmergencyCall" />
+    <bpmn:endEvent id="End_Intake_EmergencyCall">
+      <bpmn:incoming>Flow_1ttk0rz</bpmn:incoming>
+      <bpmn:incoming>Flow_0sxirb3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_12tau77" sourceRef="Task_CreateIncident_EmergencyCall" targetRef="Activity_1yu2941" />
+    <bpmn:serviceTask id="Task_CreateIncident_EmergencyCall" name="Create Incident">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="ensure-incident" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="topic" value="EMERGENCYCALL" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:output source="= entityId" target="entityId" />
+          <zeebe:output source="= entityDefinitionName" target="entityDefinitionName" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ch71y5</bpmn:incoming>
+      <bpmn:outgoing>Flow_12tau77</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_16yb9vq" sourceRef="Form_Intake_TakeCall" targetRef="Gateway_13zi9d9" />
+    <bpmn:userTask id="Form_Intake_TakeCall" name="Take Call">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="TakeCall" />
+          <zeebe:header key="hold" value="true" />
+          <zeebe:header key="show" value="CallInfo" />
+          <zeebe:header key="procedureId" value="EMERGENCY CALL" />
+          <zeebe:header key="output" value="IncidentTopic" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:output source="= if MISSINGVESSEL then &#34;MISSINGVESSEL&#34; else null" target="IncidentTopic" />
+          <zeebe:output source="= CallInfo" target="CallInfo" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0l4zj1m</bpmn:incoming>
+      <bpmn:outgoing>Flow_16yb9vq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_13zi9d9" default="Flow_0sxirb3">
+      <bpmn:incoming>Flow_16yb9vq</bpmn:incoming>
+      <bpmn:outgoing>Flow_156jcha</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0sxirb3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_156jcha" sourceRef="Gateway_13zi9d9" targetRef="Task_LaunchIncident">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= IncidentTopic != null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1ttk0rz" sourceRef="Task_LaunchIncident" targetRef="End_Intake_EmergencyCall" />
+    <bpmn:sendTask id="Task_LaunchIncident" name="Launch Incident">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="SendMessage" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="Message" value="###" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="= IncidentTopic" target="Message" />
+          <zeebe:input source="= {CallInfo : CallInfo,StartEvent:StartEvent,entityId:entityId }" target="info" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_156jcha</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ttk0rz</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0sxirb3" sourceRef="Gateway_13zi9d9" targetRef="End_Intake_EmergencyCall" />
+    <bpmn:userTask id="Activity_1yu2941" name="Show Counter">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=true" target="completed" />
+          <zeebe:input source="=&#34;Time elapsed since start of incident&#34;" target="description" />
+          <zeebe:input source="=StartEvent" target="EventStart" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="ShowCounter" />
+          <zeebe:header key="procedureId" value="GENERAL" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12tau77</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l4zj1m</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0l4zj1m" sourceRef="Activity_1yu2941" targetRef="Form_Intake_TakeCall" />
+    <bpmn:textAnnotation id="TextAnnotation_0cdwr70">
+      <bpmn:text>Register name, select IncidentType</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1938wyf" sourceRef="Form_Intake_TakeCall" targetRef="TextAnnotation_0cdwr70" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Intake_EmergencyCall">
+      <bpmndi:BPMNEdge id="Flow_0l4zj1m_di" bpmnElement="Flow_0l4zj1m">
+        <di:waypoint x="560" y="207" />
+        <di:waypoint x="670" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sxirb3_di" bpmnElement="Flow_0sxirb3">
+        <di:waypoint x="880" y="232" />
+        <di:waypoint x="880" y="340" />
+        <di:waypoint x="1210" y="340" />
+        <di:waypoint x="1210" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ttk0rz_di" bpmnElement="Flow_1ttk0rz">
+        <di:waypoint x="1100" y="207" />
+        <di:waypoint x="1192" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_156jcha_di" bpmnElement="Flow_156jcha">
+        <di:waypoint x="905" y="207" />
+        <di:waypoint x="1000" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16yb9vq_di" bpmnElement="Flow_16yb9vq">
+        <di:waypoint x="770" y="207" />
+        <di:waypoint x="855" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12tau77_di" bpmnElement="Flow_12tau77">
+        <di:waypoint x="370" y="207" />
+        <di:waypoint x="460" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ch71y5_di" bpmnElement="Flow_1ch71y5">
+        <di:waypoint x="215" y="207" />
+        <di:waypoint x="270" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_Intake_EmergencyCall" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1renpec_di" bpmnElement="End_Intake_EmergencyCall" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1192" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u733uj_di" bpmnElement="Task_CreateIncident_EmergencyCall">
+        <dc:Bounds x="270" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qkvs46_di" bpmnElement="Form_Intake_TakeCall">
+        <dc:Bounds x="670" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_13zi9d9_di" bpmnElement="Gateway_13zi9d9" isMarkerVisible="true" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="855" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f09dm6_di" bpmnElement="Task_LaunchIncident">
+        <dc:Bounds x="1000" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yu2941_di" bpmnElement="Activity_1yu2941">
+        <dc:Bounds x="460" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0cdwr70_di" bpmnElement="TextAnnotation_0cdwr70">
+        <dc:Bounds x="770" y="80" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1938wyf_di" bpmnElement="Association_1938wyf">
+        <di:waypoint x="756" y="167" />
+        <di:waypoint x="785" y="134" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0jdsj5v" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="MOB" name="MOB" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1wnnkj9" sourceRef="Sub_Intake_MOB" targetRef="Sub_Analysis_MOB" />
+    <bpmn:sequenceFlow id="Flow_05ic56u" sourceRef="Sub_Analysis_MOB" targetRef="Sub_Action_MOB" />
+    <bpmn:sequenceFlow id="Flow_0znnbws" sourceRef="Sub_Action_MOB" targetRef="Sub_Closure_MOB" />
+    <bpmn:endEvent id="End_MOB">
+      <bpmn:incoming>Flow_047pqct</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_047pqct" sourceRef="Sub_Closure_MOB" targetRef="End_MOB" />
+    <bpmn:callActivity id="Sub_Intake_MOB" name="Intake MOB">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Intake_MOB" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1dlmhx0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wnnkj9</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Sub_Analysis_MOB" name="Analysis MOB">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Analysis_MOB" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wnnkj9</bpmn:incoming>
+      <bpmn:outgoing>Flow_05ic56u</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Sub_Action_MOB" name="Action MOB">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Action_MOB" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05ic56u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0znnbws</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Sub_Closure_MOB" name="Closure MOB">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Closure_MOB" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0znnbws</bpmn:incoming>
+      <bpmn:outgoing>Flow_047pqct</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:subProcess id="Activity_0qlmd6z" triggeredByEvent="true">
+      <bpmn:startEvent id="Start_UpdateLKP_MOB" name="Update LKP" isInterrupting="false">
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="= info.LKP" target="LKP" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:outgoing>Flow_16izt83</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1s41uv7" messageRef="Message_1jvs08a" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_16izt83" sourceRef="Start_UpdateLKP_MOB" targetRef="Form_UpdatedLKP_MOB" />
+      <bpmn:endEvent id="Event_0bv41ff">
+        <bpmn:incoming>Flow_17kpool</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_17kpool" sourceRef="Form_UpdatedLKP_MOB" targetRef="Event_0bv41ff" />
+      <bpmn:userTask id="Form_UpdatedLKP_MOB" name="Updated Last Known Position">
+        <bpmn:extensionElements>
+          <zeebe:taskHeaders>
+            <zeebe:header key="assemblyCode" value="UpdatedLKPMOB" />
+            <zeebe:header key="show" value="LKP" />
+          </zeebe:taskHeaders>
+          <zeebe:ioMapping>
+            <zeebe:input source="= LKP" target="LKP" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_16izt83</bpmn:incoming>
+        <bpmn:outgoing>Flow_17kpool</bpmn:outgoing>
+      </bpmn:userTask>
+    </bpmn:subProcess>
+    <bpmn:startEvent id="Start_MOB" name="Man Over Board">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= entityId" target="entityId" />
+          <zeebe:output source="= info.Beacon.BeaconId" target="BeaconId" />
+          <zeebe:output source="= info.Location" target="LKP" />
+          <zeebe:output source="= &#34;incident&#34;" target="entityDefinitionName" />
+          <zeebe:output source="=info.Beacon" target="Beacon" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1dlmhx0</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0sehsnb" messageRef="Message_3tb8o57" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1dlmhx0" sourceRef="Start_MOB" targetRef="Sub_Intake_MOB" />
+  </bpmn:process>
+  <bpmn:message id="Message_3tb8o57" name="startMOB" />
+  <bpmn:message id="Message_1jvs08a" name="UpdateLKP">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="= BeaconId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="MOB">
+      <bpmndi:BPMNEdge id="Flow_047pqct_di" bpmnElement="Flow_047pqct">
+        <di:waypoint x="850" y="117" />
+        <di:waypoint x="912" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0znnbws_di" bpmnElement="Flow_0znnbws">
+        <di:waypoint x="690" y="117" />
+        <di:waypoint x="750" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05ic56u_di" bpmnElement="Flow_05ic56u">
+        <di:waypoint x="530" y="117" />
+        <di:waypoint x="590" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wnnkj9_di" bpmnElement="Flow_1wnnkj9">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="430" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dlmhx0_di" bpmnElement="Flow_1dlmhx0">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1jldowr_di" bpmnElement="Start_MOB" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="142" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0u5r7xu_di" bpmnElement="End_MOB" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="912" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11qsifr_di" bpmnElement="Sub_Intake_MOB">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0i4bgif_di" bpmnElement="Sub_Analysis_MOB">
+        <dc:Bounds x="430" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0747t3m_di" bpmnElement="Sub_Action_MOB">
+        <dc:Bounds x="590" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1uoajgk_di" bpmnElement="Sub_Closure_MOB">
+        <dc:Bounds x="750" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s0wzig_di" bpmnElement="Activity_0qlmd6z" isExpanded="true">
+        <dc:Bounds x="370" y="270" width="385" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_17kpool_di" bpmnElement="Flow_17kpool">
+        <di:waypoint x="605" y="370" />
+        <di:waypoint x="667" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16izt83_di" bpmnElement="Flow_16izt83">
+        <di:waypoint x="446" y="370" />
+        <di:waypoint x="505" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_16gkq6u_di" bpmnElement="Start_UpdateLKP_MOB" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="410" y="352" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="398" y="395" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0bv41ff_di" bpmnElement="Event_0bv41ff" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="667" y="352" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wxs44j_di" bpmnElement="Form_UpdatedLKP_MOB">
+        <dc:Bounds x="505" y="330" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

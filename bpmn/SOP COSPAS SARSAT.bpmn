@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0403ogx" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="COSPAS_SARSAT" name="COSPAS SARSAT" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_07lckj1" sourceRef="Start_COSPAS_SARSAT" targetRef="Sub_Intake_COSPAS_SARSAT" />
+    <bpmn:callActivity id="Sub_Intake_COSPAS_SARSAT" name="Intake COSPAS SARSAT">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Intake_COSPAS_SARSAT" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07lckj1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lnrrck</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:startEvent id="Start_COSPAS_SARSAT" name="COSPAS SARSAT">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= COSPASSARSAT.Beacon.BeaconId" target="BeaconId" />
+          <zeebe:output source="= COSPASSARSAT" target="COSPASSARSAT" />
+          <zeebe:output source="= COSPASSARSAT.StartEvent" target="StartEvent" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_07lckj1</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_061bvo8" messageRef="Message_30qa0d2" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1lnrrck" sourceRef="Sub_Intake_COSPAS_SARSAT" targetRef="Sub_Analysis_COSPAS_SARSAT" />
+    <bpmn:sequenceFlow id="Flow_128oqvi" sourceRef="Sub_Analysis_COSPAS_SARSAT" targetRef="Sub_Action_COSPAS_SARSAT" />
+    <bpmn:sequenceFlow id="Flow_0m71s9y" sourceRef="Sub_Action_COSPAS_SARSAT" targetRef="Sub_Closure_COSPAS_SARSAT" />
+    <bpmn:endEvent id="EndCOSPASSARSAT">
+      <bpmn:incoming>Flow_0dmg5gq</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0dmg5gq" sourceRef="Sub_Closure_COSPAS_SARSAT" targetRef="EndCOSPASSARSAT" />
+    <bpmn:callActivity id="Sub_Analysis_COSPAS_SARSAT" name="Analysis COSPAS SARSAT">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Analysis_COSPAS_SARSAT" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1lnrrck</bpmn:incoming>
+      <bpmn:outgoing>Flow_128oqvi</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Sub_Action_COSPAS_SARSAT" name="Action COSPAS SARSAT">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Action_COSPAS_SARSAT" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_128oqvi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m71s9y</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Sub_Closure_COSPAS_SARSAT" name="Closure COSPAS SARSAT">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Closure_COSPAS_SARSAT" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0m71s9y</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dmg5gq</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmn:message id="Message_100ats7" name="StartCOSPASSARSAT" />
+  <bpmn:message id="Message_30qa0d2" name="COSPASSARSAT" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="COSPAS_SARSAT">
+      <bpmndi:BPMNEdge id="Flow_0dmg5gq_di" bpmnElement="Flow_0dmg5gq">
+        <di:waypoint x="1010" y="117" />
+        <di:waypoint x="1112" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m71s9y_di" bpmnElement="Flow_0m71s9y">
+        <di:waypoint x="810" y="117" />
+        <di:waypoint x="910" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_128oqvi_di" bpmnElement="Flow_128oqvi">
+        <di:waypoint x="610" y="117" />
+        <di:waypoint x="710" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lnrrck_di" bpmnElement="Flow_1lnrrck">
+        <di:waypoint x="410" y="117" />
+        <di:waypoint x="510" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07lckj1_di" bpmnElement="Flow_07lckj1">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="310" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1c6mtlf_di" bpmnElement="Sub_Intake_COSPAS_SARSAT">
+        <dc:Bounds x="310" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_106tb38_di" bpmnElement="Start_COSPAS_SARSAT" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="174" y="142" width="46" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0z8y50y_di" bpmnElement="EndCOSPASSARSAT" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1112" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jxi9ja_di" bpmnElement="Sub_Analysis_COSPAS_SARSAT">
+        <dc:Bounds x="510" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1u68ug5_di" bpmnElement="Sub_Action_COSPAS_SARSAT">
+        <dc:Bounds x="710" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kxce2x_di" bpmnElement="Sub_Closure_COSPAS_SARSAT">
+        <dc:Bounds x="910" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

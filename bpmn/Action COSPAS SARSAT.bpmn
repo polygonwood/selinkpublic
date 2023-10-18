@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0rwosfk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Action_COSPAS_SARSAT" name="Action COSPAS SARSAT" isExecutable="true">
+    <bpmn:startEvent id="Start_Action_COSPAS_SARSAT">
+      <bpmn:outgoing>Flow_0lc00iu</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0lc00iu" sourceRef="Start_Action_COSPAS_SARSAT" targetRef="Gateway_0w8amft" />
+    <bpmn:receiveTask id="Message_Beacon_Update" name="Beacon Update" messageRef="Message_1n86e90">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= COSPASSARSAT.Location" target="LKP" />
+          <zeebe:output source="= UpdateTimestamp" target="UpdateTimestamp" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1c7fk6y</bpmn:incoming>
+      <bpmn:incoming>Flow_05k60da</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i12xi2</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="Flow_1i12xi2" sourceRef="Message_Beacon_Update" targetRef="Send_Update_LKP" />
+    <bpmn:sequenceFlow id="Flow_1c7fk6y" sourceRef="Gateway_0w8amft" targetRef="Message_Beacon_Update" />
+    <bpmn:parallelGateway id="Gateway_0w8amft">
+      <bpmn:incoming>Flow_0lc00iu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c7fk6y</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1iwxxza</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="Form_waiting_beacon_updates" name="Waiting for Beacon Updates">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="WaitingBeaconUpdates" />
+          <zeebe:header key="show" value="instruction" />
+          <zeebe:header key="procedureId" value="COSPAS SARSAT" />
+          <zeebe:header key="hold" value="true" />
+          <zeebe:header key="output" value="FalseAlarm" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;Waiting for Beacon position updates&#34;" target="instruction" />
+          <zeebe:input source="= {message:&#34;SkipWaitingBeaconUpdates&#34;,correlationKey:BeaconId,variables:{}}" target="leaveMessage" />
+          <zeebe:output source="= FalseAlarm" target="FalseAlarm" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1iwxxza</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m7e2dk</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_1bb6rc9" name="End Waiting" attachedToRef="Message_Beacon_Update">
+      <bpmn:outgoing>Flow_1s1e9u3</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_00o6blx" messageRef="Message_3pdn4nd" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="End_Action_COSPAS_SARSAT">
+      <bpmn:incoming>Flow_1ac37ee</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1iwxxza" sourceRef="Gateway_0w8amft" targetRef="Form_waiting_beacon_updates" />
+    <bpmn:parallelGateway id="Gateway_1c1jh8s">
+      <bpmn:incoming>Flow_1s1e9u3</bpmn:incoming>
+      <bpmn:incoming>Flow_1m7e2dk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ac37ee</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1s1e9u3" sourceRef="Event_1bb6rc9" targetRef="Gateway_1c1jh8s" />
+    <bpmn:sequenceFlow id="Flow_1m7e2dk" sourceRef="Form_waiting_beacon_updates" targetRef="Gateway_1c1jh8s" />
+    <bpmn:sequenceFlow id="Flow_1ac37ee" sourceRef="Gateway_1c1jh8s" targetRef="End_Action_COSPAS_SARSAT" />
+    <bpmn:sendTask id="Send_Update_LKP" name="Update LKP">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="SendMessage" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="Message" value="UpdateLKP" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="= BeaconId" target="correlationKey" />
+          <zeebe:input source="= {LKP:LKP,UpdateTimestamp:UpdateTimestamp}" target="info" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1i12xi2</bpmn:incoming>
+      <bpmn:outgoing>Flow_14fz7fe</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_14fz7fe" sourceRef="Send_Update_LKP" targetRef="Form_PositionUpdate_Action_COSPASSARSAT" />
+    <bpmn:sequenceFlow id="Flow_05k60da" sourceRef="Form_PositionUpdate_Action_COSPASSARSAT" targetRef="Message_Beacon_Update" />
+    <bpmn:userTask id="Form_PositionUpdate_Action_COSPASSARSAT" name="Position Update">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="PositionUpdateCOSPASSARSAT" />
+          <zeebe:header key="procedureId" value="COSPAS SARSAT" />
+          <zeebe:header key="show" value="LKP" />
+          <zeebe:header key="hold" value="true" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=true" target="completed" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14fz7fe</bpmn:incoming>
+      <bpmn:outgoing>Flow_05k60da</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:textAnnotation id="TextAnnotation_00xj6of">
+      <bpmn:text>Send End Waiting
+or False Alarm</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_17k5vgc" sourceRef="Form_waiting_beacon_updates" targetRef="TextAnnotation_00xj6of" />
+    <bpmn:textAnnotation id="TextAnnotation_13z0dat">
+      <bpmn:text>Automatic close form</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1vpymzd" sourceRef="Form_PositionUpdate_Action_COSPASSARSAT" targetRef="TextAnnotation_13z0dat" />
+    <bpmn:textAnnotation id="TextAnnotation_0n1n0ct">
+      <bpmn:text>Inform other processes</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1erssi9" sourceRef="Send_Update_LKP" targetRef="TextAnnotation_0n1n0ct" />
+  </bpmn:process>
+  <bpmn:message id="Message_1n86e90" name="COSPASSARSATUpdate">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="= BeaconId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_3pdn4nd" name="SkipWaitingBeaconUpdates">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="= BeaconId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Action_COSPAS_SARSAT">
+      <bpmndi:BPMNEdge id="Flow_05k60da_di" bpmnElement="Flow_05k60da">
+        <di:waypoint x="760" y="277" />
+        <di:waypoint x="760" y="330" />
+        <di:waypoint x="440" y="330" />
+        <di:waypoint x="440" y="277" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14fz7fe_di" bpmnElement="Flow_14fz7fe">
+        <di:waypoint x="650" y="237" />
+        <di:waypoint x="710" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ac37ee_di" bpmnElement="Flow_1ac37ee">
+        <di:waypoint x="915" y="237" />
+        <di:waypoint x="972" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m7e2dk_di" bpmnElement="Flow_1m7e2dk">
+        <di:waypoint x="550" y="430" />
+        <di:waypoint x="890" y="430" />
+        <di:waypoint x="890" y="262" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s1e9u3_di" bpmnElement="Flow_1s1e9u3">
+        <di:waypoint x="440" y="179" />
+        <di:waypoint x="440" y="159" />
+        <di:waypoint x="890" y="159" />
+        <di:waypoint x="890" y="212" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1iwxxza_di" bpmnElement="Flow_1iwxxza">
+        <di:waypoint x="290" y="262" />
+        <di:waypoint x="290" y="430" />
+        <di:waypoint x="450" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c7fk6y_di" bpmnElement="Flow_1c7fk6y">
+        <di:waypoint x="315" y="237" />
+        <di:waypoint x="390" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i12xi2_di" bpmnElement="Flow_1i12xi2">
+        <di:waypoint x="490" y="237" />
+        <di:waypoint x="550" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lc00iu_di" bpmnElement="Flow_0lc00iu">
+        <di:waypoint x="188" y="237" />
+        <di:waypoint x="265" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_Action_COSPAS_SARSAT" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="152" y="219" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jb0gcf_di" bpmnElement="Message_Beacon_Update">
+        <dc:Bounds x="390" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0dl7hvv_di" bpmnElement="Gateway_0w8amft" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="265" y="212" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_034zaow_di" bpmnElement="Form_waiting_beacon_updates">
+        <dc:Bounds x="450" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0zfwh4o_di" bpmnElement="End_Action_COSPAS_SARSAT" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="972" y="219" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0v3s28k_di" bpmnElement="Gateway_1c1jh8s" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="865" y="212" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17z8e58_di" bpmnElement="Send_Update_LKP">
+        <dc:Bounds x="550" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1h3eg1y_di" bpmnElement="Form_PositionUpdate_Action_COSPASSARSAT">
+        <dc:Bounds x="710" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_00xj6of_di" bpmnElement="TextAnnotation_00xj6of">
+        <dc:Bounds x="480" y="510" width="150" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_13z0dat_di" bpmnElement="TextAnnotation_13z0dat">
+        <dc:Bounds x="770" y="360" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0n1n0ct_di" bpmnElement="TextAnnotation_0n1n0ct">
+        <dc:Bounds x="600" y="80" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00blaq8_di" bpmnElement="Event_1bb6rc9" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="422" y="179" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="460" y="173" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_17k5vgc_di" bpmnElement="Association_17k5vgc">
+        <di:waypoint x="513" y="470" />
+        <di:waypoint x="525" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1vpymzd_di" bpmnElement="Association_1vpymzd">
+        <di:waypoint x="777" y="277" />
+        <di:waypoint x="813" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1erssi9_di" bpmnElement="Association_1erssi9">
+        <di:waypoint x="614" y="197" />
+        <di:waypoint x="641" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

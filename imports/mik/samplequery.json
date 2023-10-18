@@ -1,0 +1,19 @@
+query {
+  incidents(filters:[{property:"name", operator: LIKE, values:["%COSPAS%"]}], sorts:[{property: "name", direction:ASC}]) {
+    entities {
+      id
+      name
+      vessels {
+        id
+        mmsi
+      }
+    }
+  }
+}
+
+mutation {
+  incident(entity: { name: "newName" }) {
+    id
+    name
+  }
+}

@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_02i3cxk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.2.0">
+  <bpmn:collaboration id="SOP241_Decide_Shadowing_">
+    <bpmn:participant id="SOP241_DecideShadowing_MIKDEFOperator" name="ROLE MIK DEF Operator" processRef="SOP241_DecideShadowing" />
+  </bpmn:collaboration>
+  <bpmn:process id="SOP241_DecideShadowing" name="Operator Decide Shadowing" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_SOP241_DecideShadowing">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_0ft7ee5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="SOP241_Task_CalculateETA" name="Calculate ETA">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="target" value="BEEZ" />
+          <zeebe:header key="track" value="RHS_track" />
+          <zeebe:header key="action" value="start" />
+        </zeebe:taskHeaders>
+        <zeebe:taskDefinition type="eta-start-calc" retries="2" />
+        <zeebe:ioMapping>
+          <zeebe:input source="= COI_ID" target="vesselID" />
+          <zeebe:output source="= ETA" target="ETA_COI" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ft7ee5</bpmn:incoming>
+      <bpmn:outgoing>Flow_10lctjj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_1v74y49" name="Wait for HMIK decision">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="procedureId" value="SOP241" />
+          <zeebe:header key="assemblyCode" value="SOP241HMIKDecisionShadowing" />
+          <zeebe:header key="SkipId" value="SOP241HMIKNotAvailable" />
+          <zeebe:header key="information" value="Wait for HMIK decision or skip for alternative contact" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=(entityDefinitionName+entityId)+&#34;HMIK&#34;" target="skipEventCorrelationKey" />
+          <zeebe:output source="= shadowing" target="shadowing" />
+          <zeebe:output source="= airshadowing" target="airshadowing" />
+          <zeebe:output source="= CPV" target="CPV" />
+        </zeebe:ioMapping>
+        <zeebe:formDefinition formKey="SOP241HMIKDecisionShadowing" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10lctjj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kpu6v5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="SOP241_User_DecideShadowingOperator" name="Alternative Contact">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="FORM" />
+        <zeebe:ioMapping>
+          <zeebe:output source="= shadowing" target="shadowing" />
+          <zeebe:output source="= CPV" target="CPV" />
+          <zeebe:output source="= airshadowing" target="airshadowing" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="SOP241AlternativeDecisionShadowing" />
+          <zeebe:header key="procedureId" value="SOP241" />
+          <zeebe:header key="role" value="MIK DEF Operator" />
+          <zeebe:header key="organization" value="MIK DEF" />
+          <zeebe:header key="contact" value="=[&#34;CSD&#34;,&#34;HAFDOPSZEB&#34;]" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wx5c5n</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fr3j40</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_17i4w9d" default="Flow_148gae2">
+      <bpmn:incoming>Flow_0zh1eoz</bpmn:incoming>
+      <bpmn:outgoing>Flow_148gae2</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0mo6gi8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateCatchEvent id="Event_SOP241_DecideShadowing_IAOI" name="COI passes messaging trigger line">
+      <bpmn:incoming>Flow_0vk7dc8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qs9bya</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_09896a0" messageRef="Message_01nndq8" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="Activity_0wm8o4l" name="Waiting for approach info">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=true" target="completed" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="SOP241WaitingApproach" />
+          <zeebe:header key="procedureId" value="SOP241" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09dbzky</bpmn:incoming>
+      <bpmn:outgoing>Flow_05yvfvi</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:parallelGateway id="Gateway_0yinlzy">
+      <bpmn:incoming>Flow_0kpu6v5</bpmn:incoming>
+      <bpmn:incoming>Flow_0fr3j40</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vk7dc8</bpmn:outgoing>
+      <bpmn:outgoing>Flow_09dbzky</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="Gateway_1b3ftj0">
+      <bpmn:incoming>Flow_0qs9bya</bpmn:incoming>
+      <bpmn:incoming>Flow_05yvfvi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zh1eoz</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="SOP240_SecureMailShadowingSitRep" name="Secure Mail">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="Instructions" value="SOP240_ShadowingSitRep" />
+          <zeebe:header key="procedureId" value="ABNL" />
+          <zeebe:header key="role" value="MIK DEF Operator" />
+          <zeebe:header key="organization" value="MIK DEF" />
+          <zeebe:header key="assemblyCode" value="secureMailForm" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mo6gi8</bpmn:incoming>
+      <bpmn:outgoing>Flow_072ml2u</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="SOP241_DecideShadowingPrepareMail" name="Situational report">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="FORM" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="procedureId" value="SOP241" />
+          <zeebe:header key="role" value="MIK DEF Operator" />
+          <zeebe:header key="organization" value="MIK DEF" />
+          <zeebe:header key="assemblyCode" value="SOP241SITREP" />
+          <zeebe:header key="mailTemplate" value="SOP241_Decideshadowing" />
+          <zeebe:header key="mailDestination" value="[&#39;DOPS&#39;,&#39;HAfdOpsZeb&#39;,&#39;HMIK&#39;]" />
+          <zeebe:header key="mailMandatory" value="true" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_148gae2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rydv8x</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="StopEvent_SOP241_DecideShadowing" name="Shadow decision taken">
+      <bpmn:incoming>Flow_072ml2u</bpmn:incoming>
+      <bpmn:incoming>Flow_0rydv8x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_SOP241_HMIKShadowingSkip" name="HMIK Not Available" attachedToRef="Activity_1v74y49">
+      <bpmn:outgoing>Flow_0wx5c5n</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1wo7zqa" messageRef="Message_009w5tw" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0wx5c5n" sourceRef="Event_SOP241_HMIKShadowingSkip" targetRef="SOP241_User_DecideShadowingOperator" />
+    <bpmn:sequenceFlow id="Flow_0ft7ee5" sourceRef="StartEvent_SOP241_DecideShadowing" targetRef="SOP241_Task_CalculateETA" />
+    <bpmn:sequenceFlow id="Flow_10lctjj" sourceRef="SOP241_Task_CalculateETA" targetRef="Activity_1v74y49" />
+    <bpmn:sequenceFlow id="Flow_0kpu6v5" sourceRef="Activity_1v74y49" targetRef="Gateway_0yinlzy" />
+    <bpmn:sequenceFlow id="Flow_072ml2u" sourceRef="SOP240_SecureMailShadowingSitRep" targetRef="StopEvent_SOP241_DecideShadowing" />
+    <bpmn:sequenceFlow id="Flow_0rydv8x" sourceRef="SOP241_DecideShadowingPrepareMail" targetRef="StopEvent_SOP241_DecideShadowing" />
+    <bpmn:sequenceFlow id="Flow_0mo6gi8" name="SOP240" sourceRef="Gateway_17i4w9d" targetRef="SOP240_SecureMailShadowingSitRep">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= ABNLCase</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0zh1eoz" sourceRef="Gateway_1b3ftj0" targetRef="Gateway_17i4w9d" />
+    <bpmn:sequenceFlow id="Flow_148gae2" name="SOP241" sourceRef="Gateway_17i4w9d" targetRef="SOP241_DecideShadowingPrepareMail" />
+    <bpmn:sequenceFlow id="Flow_0vk7dc8" sourceRef="Gateway_0yinlzy" targetRef="Event_SOP241_DecideShadowing_IAOI" />
+    <bpmn:sequenceFlow id="Flow_0qs9bya" sourceRef="Event_SOP241_DecideShadowing_IAOI" targetRef="Gateway_1b3ftj0" />
+    <bpmn:sequenceFlow id="Flow_09dbzky" sourceRef="Gateway_0yinlzy" targetRef="Activity_0wm8o4l" />
+    <bpmn:sequenceFlow id="Flow_05yvfvi" sourceRef="Activity_0wm8o4l" targetRef="Gateway_1b3ftj0" />
+    <bpmn:sequenceFlow id="Flow_0fr3j40" sourceRef="SOP241_User_DecideShadowingOperator" targetRef="Gateway_0yinlzy" />
+    <bpmn:textAnnotation id="TextAnnotation_1pt2mst">
+      <bpmn:text>Triggers UI to show SKIP</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1d2qed4">
+      <bpmn:text>Indicate ETA of COI on GIS view</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_02uixuq">
+      <bpmn:text>Situational report to DOPS, HafdOpsZeb, HMIK</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1q2etcg">
+      <bpmn:text>autocompletes</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0s6brvb">
+      <bpmn:text>Needs further detailing !</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0uh48f2" sourceRef="Activity_1v74y49" targetRef="TextAnnotation_1pt2mst" />
+    <bpmn:association id="Association_06swzg8" sourceRef="SOP241_Task_CalculateETA" targetRef="TextAnnotation_1d2qed4" />
+    <bpmn:association id="Association_126x0e0" sourceRef="SOP241_DecideShadowingPrepareMail" targetRef="TextAnnotation_02uixuq" />
+    <bpmn:association id="Association_1ofuisc" sourceRef="Activity_0wm8o4l" targetRef="TextAnnotation_1q2etcg" />
+    <bpmn:association id="Association_0koip69" sourceRef="SOP240_SecureMailShadowingSitRep" targetRef="TextAnnotation_0s6brvb" />
+  </bpmn:process>
+  <bpmn:message id="Message_18mruav" name="SOP241-Decide-HMIK">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=COI_ID" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1ywnopv" name="SOP241-Inform-HMIK">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=&#34;deprecated&#34;" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_11vby12" name="SOP241-HMIK-Shadowing">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=entityDefinitionName+entityId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_009w5tw" name="Skip-Event">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=(entityDefinitionName+entityId)+&#34;SOP241HMIK&#34;" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0uqkpqc" name="SOP241-HMIK-Shadowing">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=alarmId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1uuqpg8" name="SOP241-Operator-HMIK-Overrule">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=COI_ID" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0i7vc8v" name="SOP241-Operator-HMIK-Overrule">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=alarmId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1exqvsh" name="SKIP">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="= alarmId+&#34;HMIK&#34;" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_01nndq8" name="Vessel-Enters-Zone">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=string(COI_ID)+&#34;RHS_IAO&#34;" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="SOP241_Decide_Shadowing_">
+      <bpmndi:BPMNShape id="Participant_115mbl4_di" bpmnElement="SOP241_DecideShadowing_MIKDEFOperator" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1350" height="588" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0fr3j40_di" bpmnElement="Flow_0fr3j40">
+        <di:waypoint x="590" y="530" />
+        <di:waypoint x="772" y="530" />
+        <di:waypoint x="772" y="415" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05yvfvi_di" bpmnElement="Flow_05yvfvi">
+        <di:waypoint x="942" y="260" />
+        <di:waypoint x="1022" y="260" />
+        <di:waypoint x="1022" y="365" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09dbzky_di" bpmnElement="Flow_09dbzky">
+        <di:waypoint x="772" y="365" />
+        <di:waypoint x="772" y="260" />
+        <di:waypoint x="842" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qs9bya_di" bpmnElement="Flow_0qs9bya">
+        <di:waypoint x="910" y="390" />
+        <di:waypoint x="997" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vk7dc8_di" bpmnElement="Flow_0vk7dc8">
+        <di:waypoint x="797" y="390" />
+        <di:waypoint x="874" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_148gae2_di" bpmnElement="Flow_148gae2">
+        <di:waypoint x="1112" y="416" />
+        <di:waypoint x="1112" y="490" />
+        <di:waypoint x="1210" y="490" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1121" y="443" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zh1eoz_di" bpmnElement="Flow_0zh1eoz">
+        <di:waypoint x="1047" y="390" />
+        <di:waypoint x="1088" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mo6gi8_di" bpmnElement="Flow_0mo6gi8">
+        <di:waypoint x="1112" y="366" />
+        <di:waypoint x="1112" y="270" />
+        <di:waypoint x="1210" y="270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1121" y="303" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rydv8x_di" bpmnElement="Flow_0rydv8x">
+        <di:waypoint x="1310" y="490" />
+        <di:waypoint x="1420" y="490" />
+        <di:waypoint x="1420" y="408" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_072ml2u_di" bpmnElement="Flow_072ml2u">
+        <di:waypoint x="1310" y="270" />
+        <di:waypoint x="1420" y="270" />
+        <di:waypoint x="1420" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kpu6v5_di" bpmnElement="Flow_0kpu6v5">
+        <di:waypoint x="590" y="390" />
+        <di:waypoint x="747" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10lctjj_di" bpmnElement="Flow_10lctjj">
+        <di:waypoint x="401" y="390" />
+        <di:waypoint x="490" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ft7ee5_di" bpmnElement="Flow_0ft7ee5">
+        <di:waypoint x="246" y="391" />
+        <di:waypoint x="301" y="391" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wx5c5n_di" bpmnElement="Flow_0wx5c5n">
+        <di:waypoint x="540" y="448" />
+        <di:waypoint x="540" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_SOP241_DecideShadowing" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="210" y="373" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0llz7kv_di" bpmnElement="SOP241_Task_CalculateETA">
+        <dc:Bounds x="301" y="351" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13nqpi0_di" bpmnElement="Activity_1v74y49">
+        <dc:Bounds x="490" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vhbw5z_di" bpmnElement="SOP241_User_DecideShadowingOperator" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="490" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_17i4w9d_di" bpmnElement="Gateway_17i4w9d" isMarkerVisible="true" bioc:stroke="rgb(251, 140, 0)" bioc:fill="rgb(255, 224, 178)">
+        <dc:Bounds x="1087" y="366" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0aoq2ue_di" bpmnElement="Event_SOP241_DecideShadowing_IAOI" bioc:stroke="rgb(142, 36, 170)" bioc:fill="rgb(225, 190, 231)">
+        <dc:Bounds x="874" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="848" y="330" width="88" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m473ox_di" bpmnElement="Activity_0wm8o4l">
+        <dc:Bounds x="842" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1x8avgj_di" bpmnElement="Gateway_0yinlzy" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="747" y="365" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0u66aco_di" bpmnElement="Gateway_1b3ftj0" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="997" y="365" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pflaza_di" bpmnElement="SOP240_SecureMailShadowingSitRep">
+        <dc:Bounds x="1210" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jgeu04_di" bpmnElement="SOP241_DecideShadowingPrepareMail" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="1210" y="450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0n12b21_di" bpmnElement="StopEvent_SOP241_DecideShadowing" bioc:stroke="rgb(229, 57, 53)" bioc:fill="rgb(255, 205, 210)">
+        <dc:Bounds x="1402" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1308" y="376" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1pt2mst_di" bpmnElement="TextAnnotation_1pt2mst">
+        <dc:Bounds x="570" y="255" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1d2qed4_di" bpmnElement="TextAnnotation_1d2qed4">
+        <dc:Bounds x="360" y="250" width="100" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_02uixuq_di" bpmnElement="TextAnnotation_02uixuq">
+        <dc:Bounds x="1273" y="570" width="138" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1q2etcg_di" bpmnElement="TextAnnotation_1q2etcg">
+        <dc:Bounds x="942" y="140" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0s6brvb_di" bpmnElement="TextAnnotation_0s6brvb">
+        <dc:Bounds x="1273" y="140" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ss61zc_di" bpmnElement="Event_SOP241_HMIKShadowingSkip" bioc:stroke="rgb(142, 36, 170)" bioc:fill="rgb(225, 190, 231)">
+        <dc:Bounds x="522" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="467" y="445" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0uh48f2_di" bpmnElement="Association_0uh48f2">
+        <di:waypoint x="566" y="350" />
+        <di:waypoint x="602" y="295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_06swzg8_di" bpmnElement="Association_06swzg8">
+        <di:waypoint x="369" y="351" />
+        <di:waypoint x="392" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_126x0e0_di" bpmnElement="Association_126x0e0">
+        <di:waypoint x="1262" y="530" />
+        <di:waypoint x="1292" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ofuisc_di" bpmnElement="Association_1ofuisc">
+        <di:waypoint x="930" y="220" />
+        <di:waypoint x="978" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0koip69_di" bpmnElement="Association_0koip69">
+        <di:waypoint x="1281" y="230" />
+        <di:waypoint x="1308" y="180" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0gadw5l" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Analysis_MissingVessel" name="Analysis Missing Vessel" isExecutable="true">
+    <bpmn:startEvent id="Start_Analysis_MissingVessel">
+      <bpmn:outgoing>Flow_1sfa0si</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="End_Analysis_MissingVessel">
+      <bpmn:incoming>Flow_09pcrqg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1sfa0si" sourceRef="Start_Analysis_MissingVessel" targetRef="Gateway_1n0af8c" />
+    <bpmn:sequenceFlow id="Flow_1jv1wx1" sourceRef="Gateway_1n0af8c" targetRef="Form_EndAnalysis_Analysis_MissingVessel" />
+    <bpmn:userTask id="Form_EndAnalysis_Analysis_MissingVessel" name="End Analysis">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="= {message:&#34;EndAnalysisMissingVessel&#34;,correlationKey:entityId,variables:{}}" target="leaveMessage" />
+          <zeebe:input source="=&#34;End Analysis Missing Vessel&#34;" target="instruction" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="EndAnalysisMissingVessel" />
+          <zeebe:header key="procedureId" value="MISSING VESSEL" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jv1wx1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hm7tq4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_09pcrqg" sourceRef="Gateway_0mp9ctk" targetRef="End_Analysis_MissingVessel" />
+    <bpmn:sequenceFlow id="Flow_1hm7tq4" sourceRef="Form_EndAnalysis_Analysis_MissingVessel" targetRef="Gateway_0mp9ctk" />
+    <bpmn:subProcess id="Activity_1wujf95">
+      <bpmn:incoming>Flow_1clmuyc</bpmn:incoming>
+      <bpmn:startEvent id="Start_inner">
+        <bpmn:outgoing>Flow_17ocwt9</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:parallelGateway id="Gateway_02wcjrc">
+        <bpmn:incoming>Flow_17ocwt9</bpmn:incoming>
+        <bpmn:outgoing>Flow_1nimojo</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1tv7a6z</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1m19sm5</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1q3jcq6</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1sr86gs</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:exclusiveGateway id="Gateway_1xqkhaz">
+        <bpmn:incoming>Flow_0bqlgwi</bpmn:incoming>
+        <bpmn:incoming>Flow_0x7mm43</bpmn:incoming>
+        <bpmn:incoming>Flow_1oqws4d</bpmn:incoming>
+        <bpmn:incoming>Flow_0w64l07</bpmn:incoming>
+        <bpmn:incoming>Flow_1h2ajq6</bpmn:incoming>
+        <bpmn:outgoing>Flow_0tybjwg</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="Task_EnigLoket" name="Collect Vessel Info Enig Loket">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="CollectInfoEnigLoket" />
+        </bpmn:extensionElements>
+        <bpmn:outgoing>Flow_1eg3b8n</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:userTask id="Form_EnigLoket" name="Enig Loket">
+        <bpmn:incoming>Flow_1eg3b8n</bpmn:incoming>
+        <bpmn:incoming>Flow_14fg5mf</bpmn:incoming>
+      </bpmn:userTask>
+      <bpmn:userTask id="Form_Brabo" name="Brabo">
+        <bpmn:incoming>Flow_15qt2qg</bpmn:incoming>
+        <bpmn:outgoing>Flow_0x7mm43</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:userTask id="Form_Cameras" name="Check Cameras">
+        <bpmn:extensionElements>
+          <zeebe:taskHeaders>
+            <zeebe:header key="assemblyCode" value="CheckCameras" />
+            <zeebe:header key="procedureId" value="MISSING VESSEL" />
+          </zeebe:taskHeaders>
+          <zeebe:ioMapping>
+            <zeebe:input source="=&#34;Check cameras for recordings of missing vessel&#34;" target="instruction" />
+            <zeebe:input source="=true" target="completed" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1nimojo</bpmn:incoming>
+        <bpmn:outgoing>Flow_1oqws4d</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_1nimojo" sourceRef="Gateway_02wcjrc" targetRef="Form_Cameras" />
+      <bpmn:sequenceFlow id="Flow_0bqlgwi" sourceRef="Form_EnigLoket" targetRef="Gateway_1xqkhaz" />
+      <bpmn:sequenceFlow id="Flow_0x7mm43" sourceRef="Form_Brabo" targetRef="Gateway_1xqkhaz" />
+      <bpmn:sequenceFlow id="Flow_1oqws4d" sourceRef="Form_Cameras" targetRef="Gateway_1xqkhaz" />
+      <bpmn:sequenceFlow id="Flow_1eg3b8n" sourceRef="Task_EnigLoket" targetRef="Form_EnigLoket" />
+      <bpmn:sequenceFlow id="Flow_17ocwt9" sourceRef="Start_inner" targetRef="Gateway_02wcjrc" />
+      <bpmn:endEvent id="End_Inner">
+        <bpmn:incoming>Flow_0tybjwg</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0tybjwg" sourceRef="Gateway_1xqkhaz" targetRef="End_Inner" />
+      <bpmn:sequenceFlow id="Flow_1tv7a6z" sourceRef="Gateway_02wcjrc" targetRef="Form_MIK" />
+      <bpmn:sequenceFlow id="Flow_12mgo4c" sourceRef="Form_MIK" targetRef="Task_MIKRequest" />
+      <bpmn:sequenceFlow id="Flow_1845xps" sourceRef="Task_MIKRequest" targetRef="Form_MIK" />
+      <bpmn:userTask id="Form_MIK" name="MIK Request">
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:input source="= &#34;Request MIK security check for vessel&#34;" target="instruction" />
+            <zeebe:output source="=if searchVessel then searchVessel else null" target="searchVessel" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="assemblyCode" value="MIKSecurityCheck" />
+            <zeebe:header key="procedureId" value="MISSING VESSEL" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1tv7a6z</bpmn:incoming>
+        <bpmn:incoming>Flow_1845xps</bpmn:incoming>
+        <bpmn:outgoing>Flow_12mgo4c</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:serviceTask id="Task_MIKRequest" name="Send MIK Request">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="MIKSecurityRequest" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=searchVessel" target="searchVessel" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_12mgo4c</bpmn:incoming>
+        <bpmn:outgoing>Flow_1845xps</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:userTask id="Form_SITREP" name="Prep SITREP">
+        <bpmn:extensionElements>
+          <zeebe:taskHeaders>
+            <zeebe:header key="procedureId" value="MISSING VESSEL" />
+            <zeebe:header key="assemblyCode" value="MissingVesselSITREP" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_11f6rlu</bpmn:incoming>
+        <bpmn:incoming>Flow_1m19sm5</bpmn:incoming>
+        <bpmn:outgoing>Flow_0c1l3zz</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_0c1l3zz" sourceRef="Form_SITREP" targetRef="Task_sendSITREP" />
+      <bpmn:serviceTask id="Task_sendSITREP" name="Send SITREP">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="Drain" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0c1l3zz</bpmn:incoming>
+        <bpmn:outgoing>Flow_11f6rlu</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_11f6rlu" sourceRef="Task_sendSITREP" targetRef="Form_SITREP" />
+      <bpmn:sequenceFlow id="Flow_1m19sm5" sourceRef="Gateway_02wcjrc" targetRef="Form_SITREP" />
+      <bpmn:sequenceFlow id="Flow_1at2wun" sourceRef="Form_MSI" targetRef="Task_MSI" />
+      <bpmn:serviceTask id="Task_MSI" name="Send MSI">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="Drain" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1at2wun</bpmn:incoming>
+        <bpmn:outgoing>Flow_1k6osdw</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:userTask id="Form_MSI" name="Prep MSI">
+        <bpmn:extensionElements>
+          <zeebe:taskHeaders>
+            <zeebe:header key="procedureId" value="MISSING VESSEL" />
+            <zeebe:header key="assemblyCode" value="MissingVesselMSI" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1q3jcq6</bpmn:incoming>
+        <bpmn:incoming>Flow_1k6osdw</bpmn:incoming>
+        <bpmn:outgoing>Flow_1at2wun</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_1q3jcq6" sourceRef="Gateway_02wcjrc" targetRef="Form_MSI" />
+      <bpmn:sequenceFlow id="Flow_1k6osdw" sourceRef="Task_MSI" targetRef="Form_MSI" />
+      <bpmn:userTask id="Form_EPRIB" name="Request EPRIB">
+        <bpmn:incoming>Flow_1voa204</bpmn:incoming>
+        <bpmn:outgoing>Flow_0k3w4is</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_0k3w4is" sourceRef="Form_EPRIB" targetRef="Task_RequestEPIRB" />
+      <bpmn:serviceTask id="Task_RequestEPIRB" name="Send EPIRB Request">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="Drain" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0k3w4is</bpmn:incoming>
+        <bpmn:outgoing>Flow_0w64l07</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_0w64l07" sourceRef="Task_RequestEPIRB" targetRef="Gateway_1xqkhaz" />
+      <bpmn:exclusiveGateway id="Gateway_1cbcyhc" default="Flow_1h2ajq6">
+        <bpmn:incoming>Flow_1sr86gs</bpmn:incoming>
+        <bpmn:outgoing>Flow_1voa204</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1h2ajq6</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_1voa204" name="EPIRB" sourceRef="Gateway_1cbcyhc" targetRef="Form_EPRIB">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= EPIRB != null</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_1h2ajq6" sourceRef="Gateway_1cbcyhc" targetRef="Gateway_1xqkhaz" />
+      <bpmn:subProcess id="Activity_0gqqhur" triggeredByEvent="true">
+        <bpmn:startEvent id="Start_IM_EPIRB" isInterrupting="false">
+          <bpmn:outgoing>Flow_1i7s5k3</bpmn:outgoing>
+          <bpmn:messageEventDefinition id="MessageEventDefinition_0uz3zuc" messageRef="Message_2fc38al" />
+        </bpmn:startEvent>
+        <bpmn:sequenceFlow id="Flow_1i7s5k3" sourceRef="Start_IM_EPIRB" targetRef="Form_EPIRB_Feedback" />
+        <bpmn:endEvent id="Event_1r62arf">
+          <bpmn:incoming>Flow_0fzfqo0</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="Flow_0fzfqo0" sourceRef="Form_EPIRB_Feedback" targetRef="Event_1r62arf" />
+        <bpmn:userTask id="Form_EPIRB_Feedback" name="EPIRB Feedback">
+          <bpmn:incoming>Flow_1i7s5k3</bpmn:incoming>
+          <bpmn:outgoing>Flow_0fzfqo0</bpmn:outgoing>
+        </bpmn:userTask>
+      </bpmn:subProcess>
+      <bpmn:boundaryEvent id="Event_0bv3afd" attachedToRef="Task_EnigLoket">
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="= &#34;Timeout&#34;" target="Error" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:outgoing>Flow_14fg5mf</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_0c0pzls">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:boundaryEvent>
+      <bpmn:sequenceFlow id="Flow_14fg5mf" sourceRef="Event_0bv3afd" targetRef="Form_EnigLoket" />
+      <bpmn:subProcess id="Activity_1uehohs" triggeredByEvent="true">
+        <bpmn:endEvent id="Event_15opyso">
+          <bpmn:incoming>Flow_1pcz9pn</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="Flow_08krzq2" sourceRef="Start_IM_MIK" targetRef="Form_MIK_Feedback" />
+        <bpmn:startEvent id="Start_IM_MIK" isInterrupting="false">
+          <bpmn:extensionElements>
+            <zeebe:ioMapping>
+              <zeebe:output source="= securityVessel" target="securityVessel" />
+              <zeebe:output source="=securityAssessment" target="securityAssessment" />
+            </zeebe:ioMapping>
+          </bpmn:extensionElements>
+          <bpmn:outgoing>Flow_08krzq2</bpmn:outgoing>
+          <bpmn:messageEventDefinition id="MessageEventDefinition_0x1z2m0" messageRef="Message_3i3duj9" />
+        </bpmn:startEvent>
+        <bpmn:userTask id="Form_MIK_Feedback" name="MIK Feedback">
+          <bpmn:extensionElements>
+            <zeebe:taskHeaders>
+              <zeebe:header key="assemblyCode" value="MIKFeedback" />
+              <zeebe:header key="procedureId" value="MISSING VESSEL" />
+            </zeebe:taskHeaders>
+          </bpmn:extensionElements>
+          <bpmn:incoming>Flow_08krzq2</bpmn:incoming>
+          <bpmn:outgoing>Flow_1pcz9pn</bpmn:outgoing>
+        </bpmn:userTask>
+        <bpmn:sequenceFlow id="Flow_1pcz9pn" sourceRef="Form_MIK_Feedback" targetRef="Event_15opyso" />
+      </bpmn:subProcess>
+      <bpmn:sequenceFlow id="Flow_15qt2qg" sourceRef="Task_Brabo" targetRef="Form_Brabo" />
+      <bpmn:serviceTask id="Task_Brabo" name="Collect Vessel Info Brabo">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="CollectInfoBrabo" />
+        </bpmn:extensionElements>
+        <bpmn:outgoing>Flow_15qt2qg</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_1sr86gs" sourceRef="Gateway_02wcjrc" targetRef="Gateway_1cbcyhc" />
+      <bpmn:textAnnotation id="TextAnnotation_0aqddw2">
+        <bpmn:text>Demonstrated in MOB</bpmn:text>
+      </bpmn:textAnnotation>
+      <bpmn:association id="Association_1otmcs1" sourceRef="Form_SITREP" targetRef="TextAnnotation_0aqddw2" />
+      <bpmn:textAnnotation id="TextAnnotation_07mao31">
+        <bpmn:text>Automated delayed response</bpmn:text>
+      </bpmn:textAnnotation>
+      <bpmn:association id="Association_1bxyuix" sourceRef="Start_IM_MIK" targetRef="TextAnnotation_07mao31" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1clmuyc" sourceRef="Gateway_1n0af8c" targetRef="Activity_1wujf95" />
+    <bpmn:sequenceFlow id="Flow_1ts76od" sourceRef="Event_0yorb8n" targetRef="Gateway_0mp9ctk" />
+    <bpmn:boundaryEvent id="Event_0yorb8n" attachedToRef="Activity_1wujf95">
+      <bpmn:outgoing>Flow_1ts76od</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0vgz0cu" messageRef="Message_0qf4v7l" />
+    </bpmn:boundaryEvent>
+    <bpmn:parallelGateway id="Gateway_1n0af8c">
+      <bpmn:incoming>Flow_1sfa0si</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jv1wx1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1clmuyc</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="Gateway_0mp9ctk">
+      <bpmn:incoming>Flow_1hm7tq4</bpmn:incoming>
+      <bpmn:incoming>Flow_1ts76od</bpmn:incoming>
+      <bpmn:outgoing>Flow_09pcrqg</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:textAnnotation id="TextAnnotation_1s2895l">
+      <bpmn:text>Send EndAnalysisMissingVessel</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_16ooxzm" sourceRef="Form_EndAnalysis_Analysis_MissingVessel" targetRef="TextAnnotation_1s2895l" />
+  </bpmn:process>
+  <bpmn:message id="Message_0qf4v7l" name="EndAnalysisMissingVessel">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=entityId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_3i3duj9" name="MIKResponseSecurity">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=entityId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:error id="Error_1rni4hk" name="EnigLoketError" />
+  <bpmn:message id="Message_2fc38al" name="EPRIBFeedback">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=entityId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Analysis_MissingVessel">
+      <bpmndi:BPMNEdge id="Flow_1ts76od_di" bpmnElement="Flow_1ts76od">
+        <di:waypoint x="1528" y="600" />
+        <di:waypoint x="1600" y="600" />
+        <di:waypoint x="1600" y="342" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1clmuyc_di" bpmnElement="Flow_1clmuyc">
+        <di:waypoint x="395" y="480" />
+        <di:waypoint x="490" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hm7tq4_di" bpmnElement="Flow_1hm7tq4">
+        <di:waypoint x="970" y="200" />
+        <di:waypoint x="1600" y="200" />
+        <di:waypoint x="1600" y="292" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09pcrqg_di" bpmnElement="Flow_09pcrqg">
+        <di:waypoint x="1625" y="317" />
+        <di:waypoint x="1692" y="317" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jv1wx1_di" bpmnElement="Flow_1jv1wx1">
+        <di:waypoint x="370" y="455" />
+        <di:waypoint x="370" y="200" />
+        <di:waypoint x="870" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sfa0si_di" bpmnElement="Flow_1sfa0si">
+        <di:waypoint x="188" y="480" />
+        <di:waypoint x="345" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_Analysis_MissingVessel" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="152" y="462" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fpuu2m_di" bpmnElement="End_Analysis_MissingVessel" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1692" y="299" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nl8g4t_di" bpmnElement="Form_EndAnalysis_Analysis_MissingVessel">
+        <dc:Bounds x="870" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wujf95_di" bpmnElement="Activity_1wujf95" isExpanded="true">
+        <dc:Bounds x="490" y="300" width="1020" height="1480" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0aqddw2_di" bpmnElement="TextAnnotation_0aqddw2">
+        <dc:Bounds x="550" y="830" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_07mao31_di" bpmnElement="TextAnnotation_07mao31">
+        <dc:Bounds x="1120" y="1680" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_15qt2qg_di" bpmnElement="Flow_15qt2qg">
+        <di:waypoint x="860" y="533" />
+        <di:waypoint x="930" y="533" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14fg5mf_di" bpmnElement="Flow_14fg5mf">
+        <di:waypoint x="810" y="342" />
+        <di:waypoint x="810" y="322" />
+        <di:waypoint x="980" y="322" />
+        <di:waypoint x="980" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h2ajq6_di" bpmnElement="Flow_1h2ajq6">
+        <di:waypoint x="790" y="1275" />
+        <di:waypoint x="790" y="1330" />
+        <di:waypoint x="1280" y="1330" />
+        <di:waypoint x="1280" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1voa204_di" bpmnElement="Flow_1voa204">
+        <di:waypoint x="815" y="1250" />
+        <di:waypoint x="870" y="1250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="827" y="1232" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w64l07_di" bpmnElement="Flow_0w64l07">
+        <di:waypoint x="1160" y="1250" />
+        <di:waypoint x="1280" y="1250" />
+        <di:waypoint x="1280" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k3w4is_di" bpmnElement="Flow_0k3w4is">
+        <di:waypoint x="970" y="1250" />
+        <di:waypoint x="1060" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k6osdw_di" bpmnElement="Flow_1k6osdw">
+        <di:waypoint x="980" y="1130" />
+        <di:waypoint x="980" y="1160" />
+        <di:waypoint x="810" y="1160" />
+        <di:waypoint x="810" y="1130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q3jcq6_di" bpmnElement="Flow_1q3jcq6">
+        <di:waypoint x="670" y="425" />
+        <di:waypoint x="670" y="1090" />
+        <di:waypoint x="760" y="1090" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1at2wun_di" bpmnElement="Flow_1at2wun">
+        <di:waypoint x="860" y="1090" />
+        <di:waypoint x="930" y="1090" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m19sm5_di" bpmnElement="Flow_1m19sm5">
+        <di:waypoint x="670" y="425" />
+        <di:waypoint x="670" y="940" />
+        <di:waypoint x="760" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11f6rlu_di" bpmnElement="Flow_11f6rlu">
+        <di:waypoint x="980" y="980" />
+        <di:waypoint x="980" y="1010" />
+        <di:waypoint x="810" y="1010" />
+        <di:waypoint x="810" y="980" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0c1l3zz_di" bpmnElement="Flow_0c1l3zz">
+        <di:waypoint x="860" y="940" />
+        <di:waypoint x="930" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1845xps_di" bpmnElement="Flow_1845xps">
+        <di:waypoint x="980" y="820" />
+        <di:waypoint x="980" y="860" />
+        <di:waypoint x="810" y="860" />
+        <di:waypoint x="810" y="820" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12mgo4c_di" bpmnElement="Flow_12mgo4c">
+        <di:waypoint x="860" y="780" />
+        <di:waypoint x="930" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tv7a6z_di" bpmnElement="Flow_1tv7a6z">
+        <di:waypoint x="670" y="425" />
+        <di:waypoint x="670" y="780" />
+        <di:waypoint x="760" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tybjwg_di" bpmnElement="Flow_0tybjwg">
+        <di:waypoint x="1305" y="400" />
+        <di:waypoint x="1392" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17ocwt9_di" bpmnElement="Flow_17ocwt9">
+        <di:waypoint x="566" y="400" />
+        <di:waypoint x="645" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eg3b8n_di" bpmnElement="Flow_1eg3b8n">
+        <di:waypoint x="860" y="400" />
+        <di:waypoint x="930" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oqws4d_di" bpmnElement="Flow_1oqws4d">
+        <di:waypoint x="940" y="673" />
+        <di:waypoint x="1280" y="673" />
+        <di:waypoint x="1280" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x7mm43_di" bpmnElement="Flow_0x7mm43">
+        <di:waypoint x="1030" y="533" />
+        <di:waypoint x="1280" y="533" />
+        <di:waypoint x="1280" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bqlgwi_di" bpmnElement="Flow_0bqlgwi">
+        <di:waypoint x="1030" y="400" />
+        <di:waypoint x="1255" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nimojo_di" bpmnElement="Flow_1nimojo">
+        <di:waypoint x="670" y="425" />
+        <di:waypoint x="670" y="673" />
+        <di:waypoint x="840" y="673" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sr86gs_di" bpmnElement="Flow_1sr86gs">
+        <di:waypoint x="670" y="425" />
+        <di:waypoint x="670" y="1250" />
+        <di:waypoint x="765" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0phtdt4_di" bpmnElement="Start_inner" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="530" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_02wcjrc_di" bpmnElement="Gateway_02wcjrc" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="645" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1xqkhaz_di" bpmnElement="Gateway_1xqkhaz" isMarkerVisible="true" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="1255" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0m04rt3_di" bpmnElement="Task_EnigLoket">
+        <dc:Bounds x="760" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0owjqb8_di" bpmnElement="Form_EnigLoket">
+        <dc:Bounds x="930" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0v9zbkt_di" bpmnElement="Form_Brabo">
+        <dc:Bounds x="930" y="493" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f2qvzb_di" bpmnElement="Form_Cameras">
+        <dc:Bounds x="840" y="633" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hzwwry_di" bpmnElement="End_Inner" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1392" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1q0slfp_di" bpmnElement="Form_MIK">
+        <dc:Bounds x="760" y="740" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13vr6u9_di" bpmnElement="Task_MIKRequest">
+        <dc:Bounds x="930" y="740" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yzjmol_di" bpmnElement="Form_SITREP">
+        <dc:Bounds x="760" y="900" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vyvl64_di" bpmnElement="Task_sendSITREP">
+        <dc:Bounds x="930" y="900" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0km3pg4_di" bpmnElement="Task_MSI">
+        <dc:Bounds x="930" y="1050" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04iiids_di" bpmnElement="Form_MSI">
+        <dc:Bounds x="760" y="1050" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16agzd8_di" bpmnElement="Form_EPRIB">
+        <dc:Bounds x="870" y="1210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ygazm2_di" bpmnElement="Task_RequestEPIRB">
+        <dc:Bounds x="1060" y="1210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1cbcyhc_di" bpmnElement="Gateway_1cbcyhc" isMarkerVisible="true" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="765" y="1225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15uv098_di" bpmnElement="Activity_0gqqhur" isExpanded="true">
+        <dc:Bounds x="670" y="1450" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0fzfqo0_di" bpmnElement="Flow_0fzfqo0">
+        <di:waypoint x="900" y="1550" />
+        <di:waypoint x="962" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i7s5k3_di" bpmnElement="Flow_1i7s5k3">
+        <di:waypoint x="746" y="1550" />
+        <di:waypoint x="800" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1cxj7cd_di" bpmnElement="Start_IM_EPIRB" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="710" y="1532" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1r62arf_di" bpmnElement="Event_1r62arf" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="962" y="1532" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1j8j984_di" bpmnElement="Form_EPIRB_Feedback">
+        <dc:Bounds x="800" y="1510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1uehohs_di" bpmnElement="Activity_1uehohs" isExpanded="true">
+        <dc:Bounds x="1050" y="1390" width="350" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1pcz9pn_di" bpmnElement="Flow_1pcz9pn">
+        <di:waypoint x="1280" y="1550" />
+        <di:waypoint x="1342" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08krzq2_di" bpmnElement="Flow_08krzq2">
+        <di:waypoint x="1126" y="1550" />
+        <di:waypoint x="1180" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_15opyso_di" bpmnElement="Event_15opyso" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1342" y="1532" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tlav7z_di" bpmnElement="Start_IM_MIK" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1090" y="1532" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rt8wo3_di" bpmnElement="Form_MIK_Feedback">
+        <dc:Bounds x="1180" y="1510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0329omd_di" bpmnElement="Task_Brabo">
+        <dc:Bounds x="760" y="493" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1otmcs1_di" bpmnElement="Association_1otmcs1">
+        <di:waypoint x="760" y="917" />
+        <di:waypoint x="650" y="868" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1bxyuix_di" bpmnElement="Association_1bxyuix">
+        <di:waypoint x="1115" y="1566" />
+        <di:waypoint x="1164" y="1680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1muzhcm_di" bpmnElement="Event_0bv3afd" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="792" y="342" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1nlxqks_di" bpmnElement="Gateway_1n0af8c" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="345" y="455" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1cptmyf_di" bpmnElement="Gateway_0mp9ctk" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="1575" y="292" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1s2895l_di" bpmnElement="TextAnnotation_1s2895l">
+        <dc:Bounds x="970" y="80" width="180" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01njz3n_di" bpmnElement="Event_0yorb8n" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="1492" y="582" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_16ooxzm_di" bpmnElement="Association_16ooxzm">
+        <di:waypoint x="958" y="160" />
+        <di:waypoint x="996" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

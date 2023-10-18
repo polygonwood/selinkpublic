@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1p0e6yb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="TestUnitDSC" name="Test Unit" isExecutable="true">
+    <bpmn:userTask id="Form_VesselInfo" name="Vessel Info">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="VesselInfo" />
+          <zeebe:header key="procedureId" value="Test Unit DSC" />
+          <zeebe:header key="show" value="instruction" />
+          <zeebe:header key="hold" value="true" />
+          <zeebe:header key="output" value="DSC" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="= &#34;Enter vessel MMSI and Channel&#34;" target="instruction" />
+          <zeebe:output source="= DSC" target="DSC" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ehnspy</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h2v4e5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1cbaxyl" sourceRef="Start_TestUnit" targetRef="Task_CreateIncident" />
+    <bpmn:sequenceFlow id="Flow_1h2v4e5" sourceRef="Form_VesselInfo" targetRef="Task_DSCChannelRequest" />
+    <bpmn:serviceTask id="Task_DSCChannelRequest" name="DSC Channel Request">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="DSCChannelRequest" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="entityId" value="true" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="= DSC.channel" target="channel" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1h2v4e5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ttqn1y</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_TestUnit">
+      <bpmn:incoming>Flow_0ttqn1y</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ttqn1y" sourceRef="Task_DSCChannelRequest" targetRef="End_TestUnit" />
+    <bpmn:sequenceFlow id="Flow_0ehnspy" sourceRef="Task_CreateIncident" targetRef="Form_VesselInfo" />
+    <bpmn:serviceTask id="Task_CreateIncident" name="Create Incident">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="ensure-incident" />
+        <zeebe:ioMapping>
+          <zeebe:output source="= entityId" target="entityId" />
+          <zeebe:output source="= entityDefinitionName" target="entityDefinitionName" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="topic" value="FORMTEST" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1cbaxyl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ehnspy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="Start_TestUnit">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= StartDate" target="StartDate" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1cbaxyl</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0qf9asb" messageRef="Message_06jh0g3" />
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_06jh0g3" name="StartTestUnit" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="TestUnitDSC">
+      <bpmndi:BPMNEdge id="Flow_1cbaxyl_di" bpmnElement="Flow_1cbaxyl">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="340" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h2v4e5_di" bpmnElement="Flow_1h2v4e5">
+        <di:waypoint x="670" y="117" />
+        <di:waypoint x="810" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ttqn1y_di" bpmnElement="Flow_0ttqn1y">
+        <di:waypoint x="910" y="117" />
+        <di:waypoint x="1042" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ehnspy_di" bpmnElement="Flow_0ehnspy">
+        <di:waypoint x="440" y="117" />
+        <di:waypoint x="570" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_06aahu7_di" bpmnElement="End_TestUnit" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1042" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11ow17r_di" bpmnElement="Task_DSCChannelRequest">
+        <dc:Bounds x="810" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qs5fo7_di" bpmnElement="Form_VesselInfo">
+        <dc:Bounds x="570" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vxk56g_di" bpmnElement="Task_CreateIncident">
+        <dc:Bounds x="340" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0y5znyz_di" bpmnElement="Start_TestUnit" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

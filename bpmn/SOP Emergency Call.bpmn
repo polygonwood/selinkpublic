@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0b3c0ht" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="EmergencyCall" name="Emergency Call" isExecutable="true">
+    <bpmn:callActivity id="Sub_Intake_EmergencyCall" name="Intake Emergency Call">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Intake_EmergencyCall" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_017qofs</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ll94mf</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_017qofs" sourceRef="Start_EmergencyCall" targetRef="Sub_Intake_EmergencyCall" />
+    <bpmn:startEvent id="Start_EmergencyCall" name="Emergency Call">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= CallInfo" target="CallInfo" />
+          <zeebe:output source="=StartEvent" target="StartEvent" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_017qofs</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1hunhcj" messageRef="Message_2ibeuv3" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1ll94mf" sourceRef="Sub_Intake_EmergencyCall" targetRef="Sub_Analysis_EmergencyCall" />
+    <bpmn:callActivity id="Sub_Analysis_EmergencyCall" name="Analysis Emergency Call">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Analysis_EmergencyCall" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ll94mf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bl5lzm</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1bl5lzm" sourceRef="Sub_Analysis_EmergencyCall" targetRef="Sub_Action_EmergencyCall" />
+    <bpmn:callActivity id="Sub_Action_EmergencyCall" name="Action Emergency Call">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Action_EmergencyCall" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1bl5lzm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w8yb85</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1w8yb85" sourceRef="Sub_Action_EmergencyCall" targetRef="Sub_Closure_EmergencyCall" />
+    <bpmn:endEvent id="Event_1pwv3uq">
+      <bpmn:incoming>Flow_0tg1xqp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0tg1xqp" sourceRef="Sub_Closure_EmergencyCall" targetRef="Event_1pwv3uq" />
+    <bpmn:callActivity id="Sub_Closure_EmergencyCall" name="Closure Emergency Call">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Closure_EmergencyCall" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1w8yb85</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tg1xqp</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmn:message id="Message_2ibeuv3" name="EmergencyCall" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EmergencyCall">
+      <bpmndi:BPMNEdge id="Flow_0tg1xqp_di" bpmnElement="Flow_0tg1xqp">
+        <di:waypoint x="970" y="117" />
+        <di:waypoint x="1062" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w8yb85_di" bpmnElement="Flow_1w8yb85">
+        <di:waypoint x="780" y="117" />
+        <di:waypoint x="870" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bl5lzm_di" bpmnElement="Flow_1bl5lzm">
+        <di:waypoint x="590" y="117" />
+        <di:waypoint x="680" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ll94mf_di" bpmnElement="Flow_1ll94mf">
+        <di:waypoint x="400" y="117" />
+        <di:waypoint x="490" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_017qofs_di" bpmnElement="Flow_017qofs">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="300" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1meip1n_di" bpmnElement="Sub_Intake_EmergencyCall">
+        <dc:Bounds x="300" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ntu6c0_di" bpmnElement="Start_EmergencyCall" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="142" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cok9dw_di" bpmnElement="Sub_Analysis_EmergencyCall">
+        <dc:Bounds x="490" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_199oluq_di" bpmnElement="Sub_Action_EmergencyCall">
+        <dc:Bounds x="680" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1pwv3uq_di" bpmnElement="Event_1pwv3uq" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1062" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wca4p6_di" bpmnElement="Sub_Closure_EmergencyCall">
+        <dc:Bounds x="870" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

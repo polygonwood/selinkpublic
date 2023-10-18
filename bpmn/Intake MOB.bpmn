@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0lihhz6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Intake_MOB" name="Intake MOB" isExecutable="true">
+    <bpmn:startEvent id="Start_Intake_MOB">
+      <bpmn:outgoing>Flow_16ngfkh</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="End_Intake_MOB">
+      <bpmn:incoming>Flow_184lu4x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_16ngfkh" sourceRef="Start_Intake_MOB" targetRef="Task_NumberIncidents_Intake_MOB" />
+    <bpmn:sequenceFlow id="Flow_05aki2n" sourceRef="Form_ShowInfo_Intake_MOB" targetRef="Task_ShowMOBSymbol_Intake_MOB" />
+    <bpmn:userTask id="Form_ShowInfo_Intake_MOB" name="Show Info">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="MOBShowInfo" />
+          <zeebe:header key="procedureId" value="MOB" />
+          <zeebe:header key="hold" value="true" />
+          <zeebe:header key="show" value="LKP" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=true" target="completed" />
+          <zeebe:input source="=result.data.incidents.totalCount" target="nrIncidents" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1cw0wy9</bpmn:incoming>
+      <bpmn:outgoing>Flow_05aki2n</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_184lu4x" sourceRef="Task_ShowMOBSymbol_Intake_MOB" targetRef="End_Intake_MOB" />
+    <bpmn:serviceTask id="Task_ShowMOBSymbol_Intake_MOB" name="Show MOB Symbol">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="DriftRequest" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=true" target="initial" />
+          <zeebe:input source="= LKP" target="DriftLocation" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="topic" value="MOB" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05aki2n</bpmn:incoming>
+      <bpmn:outgoing>Flow_184lu4x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1cw0wy9" sourceRef="Task_NumberIncidents_Intake_MOB" targetRef="Form_ShowInfo_Intake_MOB" />
+    <bpmn:serviceTask id="Task_NumberIncidents_Intake_MOB" name="Number Incidents">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="GraphQl" />
+        <zeebe:ioMapping>
+          <zeebe:input source="= &#34;query { incidents { totalCount } }&#34;" target="query" />
+          <zeebe:output source="=result" target="result" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16ngfkh</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cw0wy9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:textAnnotation id="TextAnnotation_1035gh3">
+      <bpmn:text>Automatic close form</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_154z24s" sourceRef="Form_ShowInfo_Intake_MOB" targetRef="TextAnnotation_1035gh3" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Intake_MOB">
+      <bpmndi:BPMNShape id="TextAnnotation_1035gh3_di" bpmnElement="TextAnnotation_1035gh3">
+        <dc:Bounds x="770" y="60" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_184lu4x_di" bpmnElement="Flow_184lu4x">
+        <di:waypoint x="1120" y="207" />
+        <di:waypoint x="1182" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05aki2n_di" bpmnElement="Flow_05aki2n">
+        <di:waypoint x="820" y="207" />
+        <di:waypoint x="1020" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16ngfkh_di" bpmnElement="Flow_16ngfkh">
+        <di:waypoint x="215" y="207" />
+        <di:waypoint x="480" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cw0wy9_di" bpmnElement="Flow_1cw0wy9">
+        <di:waypoint x="580" y="207" />
+        <di:waypoint x="720" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_Intake_MOB" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18k0ywc_di" bpmnElement="End_Intake_MOB" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1182" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g2ai72_di" bpmnElement="Task_ShowMOBSymbol_Intake_MOB">
+        <dc:Bounds x="1020" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_028a2ux_di" bpmnElement="Task_NumberIncidents_Intake_MOB">
+        <dc:Bounds x="480" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09ok6eo_di" bpmnElement="Form_ShowInfo_Intake_MOB">
+        <dc:Bounds x="720" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_154z24s_di" bpmnElement="Association_154z24s">
+        <di:waypoint x="784" y="167" />
+        <di:waypoint x="809" y="100" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_00c02vw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.16.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Create_project" name="Create project" isExecutable="true">
+    <bpmn:documentation>Create new engineering project</bpmn:documentation>
+    <bpmn:endEvent id="End_Intake_MissingVessel">
+      <bpmn:incoming>Flow_0kj47v0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0iziipo" sourceRef="Collect_project_info" targetRef="Form_Show_Project_info" />
+    <bpmn:userTask id="Collect_project_info" name="Collect project info">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="CollectVesselInfo" />
+          <zeebe:header key="hold" value="true" />
+          <zeebe:header key="procedureId" value="MISSING VESSEL" />
+          <zeebe:header key="show" value="instruction" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=startDate" target="startDate" />
+          <zeebe:output source="=projectInfo" target="projectInfo" />
+        </zeebe:ioMapping>
+        <zeebe:formDefinition formKey="Form_Collect_project_info" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1af9fmx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iziipo</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1af9fmx" sourceRef="Start_Create_project" targetRef="Collect_project_info" />
+    <bpmn:sequenceFlow id="Flow_0kj47v0" sourceRef="Form_Show_Project_info" targetRef="End_Intake_MissingVessel" />
+    <bpmn:userTask id="Form_Show_Project_info" name="Show Project Info">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="Form_show_project_info" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0iziipo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kj47v0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="Start_Create_project" name="Launch new project">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=startDate" target="startDate" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1af9fmx</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_11fxmp9" messageRef="Message_0s354t3" />
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_26thqgi" name="Message_26thqgi" />
+  <bpmn:message id="Message_0s354t3" name="START_CREATE_PROJECT" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Create_project">
+      <bpmndi:BPMNShape id="Event_0ureqsz_di" bpmnElement="End_Intake_MissingVessel" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="812" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kzh7zh_di" bpmnElement="Collect_project_info">
+        <dc:Bounds x="350" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1us61ez_di" bpmnElement="Form_Show_Project_info">
+        <dc:Bounds x="570" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gjkv0d_di" bpmnElement="Start_Create_project" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="167" y="142" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0iziipo_di" bpmnElement="Flow_0iziipo">
+        <di:waypoint x="450" y="117" />
+        <di:waypoint x="570" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1af9fmx_di" bpmnElement="Flow_1af9fmx">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="350" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kj47v0_di" bpmnElement="Flow_0kj47v0">
+        <di:waypoint x="670" y="117" />
+        <di:waypoint x="812" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

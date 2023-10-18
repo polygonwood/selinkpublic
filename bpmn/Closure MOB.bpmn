@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1cypwpd" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
+  <bpmn:process id="Closure_MOB" name="Closure MOB" isExecutable="true">
+    <bpmn:startEvent id="Start_Closure_MOB">
+      <bpmn:outgoing>Flow_14xruta</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="End_Closure_MOB">
+      <bpmn:incoming>Flow_180owj6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_14xruta" sourceRef="Start_Closure_MOB" targetRef="Form_Recovery_MOB" />
+    <bpmn:userTask id="Form_Recovery_MOB" name="Recovery">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="RecoveryMOB" />
+          <zeebe:header key="procedureId" value="MOB" />
+          <zeebe:header key="show" value="instruction" />
+          <zeebe:header key="output" value="RecoveryMedEvac" />
+          <zeebe:header key="hold" value="true" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="= &#34;Fill out Recovery and MedEvac data&#34;" target="instruction" />
+          <zeebe:input source="=&#34;ronny.dewaele@ebo-enterprises.com&#34;" target="Recipient" />
+          <zeebe:output source="= {RecoveryTime:RecoveryTime,RecoveryLocation:RecoveryLocation}" target="RecoveryData" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14xruta</bpmn:incoming>
+      <bpmn:outgoing>Flow_071z5li</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_MedEvac_MOB" default="Flow_0w6w182">
+      <bpmn:outgoing>Flow_MedEvac</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0w6w182</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_MedEvac" name="MedEvac" sourceRef="Gateway_MedEvac_MOB" targetRef="Send_MedEvac_MOB">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= MedEvacRequired = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_07ucjge" sourceRef="Send_MedEvac_MOB" targetRef="Gateway_1m9ql7f" />
+    <bpmn:exclusiveGateway id="Gateway_1m9ql7f">
+      <bpmn:incoming>Flow_07ucjge</bpmn:incoming>
+      <bpmn:incoming>Flow_0w6w182</bpmn:incoming>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_0x29fxb" name="SITREP">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="SITREP" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="Type" value="ClosureMOB" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0w6w182" sourceRef="Gateway_MedEvac_MOB" targetRef="Gateway_1m9ql7f" />
+    <bpmn:sendTask id="Send_MedEvac_MOB" name="Launch MedEvac">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="SendMessage" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="Message" value="MEDEVAC" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="= RecoveryData" target="Info" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_MedEvac</bpmn:incoming>
+      <bpmn:outgoing>Flow_07ucjge</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_071z5li" sourceRef="Form_Recovery_MOB" targetRef="Task_Quality_Analysis_Closure_MOB" />
+    <bpmn:sequenceFlow id="Flow_180owj6" sourceRef="Activity_1gqibz4" targetRef="End_Closure_MOB" />
+    <bpmn:userTask id="Activity_1gqibz4" name="SITREP">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="assemblyCode" value="RecoveryMOBSitrep" />
+          <zeebe:header key="procedureId" value="MOB" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;ronny.dewaele@ebo-enterprises.com&#34;" target="recipient" />
+          <zeebe:output source="= MedEvacRequired" target="MedEvacRequired" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_001hvrs</bpmn:incoming>
+      <bpmn:outgoing>Flow_180owj6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_001hvrs" sourceRef="Task_Quality_Analysis_Closure_MOB" targetRef="Activity_1gqibz4" />
+    <bpmn:serviceTask id="Task_Quality_Analysis_Closure_MOB" name="Quality Analysis">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=RecoveryData" target="RecoveryData" />
+          <zeebe:input source="= StartEvent" target="StartEvent" />
+          <zeebe:output source="= ElapsedTime" target="ElapsedTime" />
+          <zeebe:output source="= MedEvacRequired" target="MedEvacRequired" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="QualityAnalysis" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_071z5li</bpmn:incoming>
+      <bpmn:outgoing>Flow_001hvrs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:textAnnotation id="TextAnnotation_0yg19ri">
+      <bpmn:text>Manually for PoC</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0si7z57" sourceRef="Send_MedEvac_MOB" targetRef="TextAnnotation_0yg19ri" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Closure_MOB">
+      <bpmndi:BPMNEdge id="Flow_180owj6_di" bpmnElement="Flow_180owj6">
+        <di:waypoint x="680" y="120" />
+        <di:waypoint x="1192" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_071z5li_di" bpmnElement="Flow_071z5li">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="420" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w6w182_di" bpmnElement="Flow_0w6w182">
+        <di:waypoint x="450" y="282" />
+        <di:waypoint x="450" y="380" />
+        <di:waypoint x="860" y="380" />
+        <di:waypoint x="860" y="282" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07ucjge_di" bpmnElement="Flow_07ucjge">
+        <di:waypoint x="700" y="257" />
+        <di:waypoint x="835" y="257" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04ycai9_di" bpmnElement="Flow_MedEvac">
+        <di:waypoint x="475" y="257" />
+        <di:waypoint x="600" y="257" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="514" y="239" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14xruta_di" bpmnElement="Flow_14xruta">
+        <di:waypoint x="215" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_001hvrs_di" bpmnElement="Flow_001hvrs">
+        <di:waypoint x="520" y="120" />
+        <di:waypoint x="580" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_Closure_MOB" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="179" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0bwbfpa_di" bpmnElement="End_Closure_MOB" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1192" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mmg8j9_di" bpmnElement="Form_Recovery_MOB">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0z1t1l5_di" bpmnElement="Gateway_MedEvac_MOB" isMarkerVisible="true">
+        <dc:Bounds x="425" y="232" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1m9ql7f_di" bpmnElement="Gateway_1m9ql7f" isMarkerVisible="true">
+        <dc:Bounds x="835" y="232" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lw877g_di" bpmnElement="Activity_0x29fxb">
+        <dc:Bounds x="990" y="217" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1o6wlw2_di" bpmnElement="Send_MedEvac_MOB">
+        <dc:Bounds x="600" y="217" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0yg19ri_di" bpmnElement="TextAnnotation_0yg19ri">
+        <dc:Bounds x="540" y="430" width="100" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rxajc0_di" bpmnElement="Activity_1gqibz4">
+        <dc:Bounds x="580" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mtutfi_di" bpmnElement="Task_Quality_Analysis_Closure_MOB">
+        <dc:Bounds x="420" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0si7z57_di" bpmnElement="Association_0si7z57">
+        <di:waypoint x="637" y="297" />
+        <di:waypoint x="595" y="430" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
