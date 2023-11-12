@@ -5,57 +5,57 @@ const { ZBClient, Duration } = require('zeebe-node');
 import { v4 as uuidv4 } from 'uuid';
 import KeycloakAuthClient from '../imports/mik/AuthClient.mjs';
 import { serverDomain, secretPassword } from '../imports/mik/settings.js';
+import { InitGraphDB,store } from './graphdb.js';
+import { QueryGraph } from './sparql.js';
 
-var MRCC;
+var SELINK;
 var zbc = {};
 var hosts = {
-  'mikdevhost': '192.168.21.50:26500',
-  'mikdemohost': '10.10.20.41:26500',
+  // 'mikdevhost': '192.168.21.50:26500',
+  // 'mikdemohost': '10.10.20.41:26500',
   'localhost': 'localhost:26500',
-  'mikacchost': 'localhost:26500' // via SSH tunnel !
+  // 'mikacchost': 'localhost:26500' // via SSH tunnel !
 }
-// var mikdevhost = '192.168.21.50:26500';
-// var mikdemohost = '10.10.20.41:26500';
-// var localhost = 'localhost:26500';
-// pick the right server !
-// var zeebehostMRCC = 'mikdevhost';
-var zeebehostMRCC = 'mikdevhost';
+var zeebehostSELINK = 'localhost';
 
 import '../imports/api/collections.js';
 import { Sops } from '../imports/api/collections.js';
 import { Forms } from '../imports/api/collections.js';
 
 Meteor.startup(async () => {
-  // connect to MRCC instance
+  // connect to camunda instance
   let mikAuthClient;
-  if (zeebehostMRCC != 'localhost') {
-    mikAuthClient = new KeycloakAuthClient({
-      domain: serverDomain,
-      realm: 'MIK',
-      clientId: 'mik-ui-react',
-      authorizationClientId: 'mik-ui',
-      username: 'mik',
-      // password: '1BrugseZot!',
-      password: secretPassword,
-    });
-    try {
-      console.log('Starting auth for', serverDomain);
-      await mikAuthClient.start();
-      // console.log('auth success',`***${mikAuthClient.accessToken}***`);
-      console.log('auth success');
-    } catch (error) {
-      console.log('Could not auth');
-      throw error;
-    }
-  }
-  MRCC = new ZBInstance('MRCC', hosts[zeebehostMRCC], mikAuthClient);
-  zbc['MRCC'] = MRCC.getZBC();
+  // if (zeebehostSELINK != 'localhost') {
+  //   mikAuthClient = new KeycloakAuthClient({
+  //     domain: serverDomain,
+  //     realm: 'MIK',
+  //     clientId: 'mik-ui-react',
+  //     authorizationClientId: 'mik-ui',
+  //     username: 'mik',
+  //     // password: '1BrugseZot!',
+  //     password: secretPassword,
+  //   });
+  //   try {
+  //     console.log('Starting auth for', serverDomain);
+  //     await mikAuthClient.start();
+  //     // console.log('auth success',`***${mikAuthClient.accessToken}***`);
+  //     console.log('auth success');
+  //   } catch (error) {
+  //     console.log('Could not auth');
+  //     throw error;
+  //   }
+  // }
+  SELINK = new ZBInstance('SELINK', hosts[zeebehostSELINK], mikAuthClient);
+  zbc['SELINK'] = SELINK.getZBC();
+  InitGraphDB();
+  // await Forms.removeAsync({});
+  // await Sops.removeAsync({});
 });
 
 Meteor.methods({
   'get.token'() {
-    if (MRCC) {
-      let token = MRCC.getToken();
+    if (SELINK) {
+      let token = SELINK.getToken();
       // console.log('server token',new Date());
       return token;
     }
@@ -83,20 +83,29 @@ Meteor.methods({
       });
     }
   },
-  'reset.poc'() {
-    Sops.remove({});
-    Forms.remove({});
+  async 'reset.poc'() {
+    await Sops.removeAsync({});
+    await Forms.removeAsync({});
   },
-  'release.form'({ zeebe, formId }) {
-    let form = Forms.findOne({ _id: formId });
+  async 'release.form'({ zeebe, formId, result }) {
+    let form = await Forms.findOneAsync({ _id: formId });
+    let variables = form.outputVariables;
+    if (form.schema) {
+      variables = { ...variables, schemaOutput: result };
+    }
     zbc[zeebe].completeJob({
       jobKey: form.jobKey,
-      variables: form.outputVariables
+      variables: variables
     });
     if (form.leaveMessage)
       Meteor.call('send.message', {
         zeebe: zeebe, name: form.leaveMessage.message, correlationKey: form.leaveMessage.correlationKey, variables: form.leaveMessage.variables
       });
-    Forms.update({ _id: formId }, { $set: { hold: false } });
+    await Forms.updateAsync({ _id: formId }, { $set: { hold: false, released: true } });
+  },
+  async 'query.graph'(customerName) {
+    let result = await QueryGraph({ customerName: customerName, store: store });
+    console.log('query.graph', result);
+    return result;
   }
 })

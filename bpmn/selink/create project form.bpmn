@@ -2,6 +2,101 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_00c02vw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.16.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.1.0">
   <bpmn:process id="Create_project" name="Create project" isExecutable="true">
     <bpmn:documentation>Create new engineering project</bpmn:documentation>
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="userTaskForm_3r7cofg">{
+  "components": [
+    {
+      "label": "Project name",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_14au7cv",
+        "columns": 6
+      },
+      "id": "Field_0opye07",
+      "key": "projectName",
+      "description": "Enter the name of the project you want to create",
+      "defaultValue": "MyProject",
+      "validate": {
+        "required": true,
+        "minLength": 6
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "Factory",
+          "value": "F"
+        },
+        {
+          "label": "Product line",
+          "value": "P"
+        }
+      ],
+      "label": "Type",
+      "type": "radio",
+      "layout": {
+        "row": "Row_14au7cv",
+        "columns": null
+      },
+      "id": "Field_0x9jm2l",
+      "key": "projectType",
+      "description": "Selcct the type of the project"
+    },
+    {
+      "label": "Customer",
+      "type": "select",
+      "layout": {
+        "row": "Row_1jn7f47",
+        "columns": null
+      },
+      "id": "Field_0yrll9b",
+      "key": "projectCustomer",
+      "description": "Plant owner",
+      "searchable": true,
+      "valuesKey": "customers"
+    },
+    {
+      "values": [
+        {
+          "label": "Belgium",
+          "value": "Belgium"
+        },
+        {
+          "label": "France",
+          "value": "France"
+        },
+        {
+          "label": "Germany",
+          "value": "Germany"
+        },
+        {
+          "label": "The Netherlands",
+          "value": "The Netherlands"
+        }
+      ],
+      "label": "Country",
+      "type": "select",
+      "layout": {
+        "row": "Row_0zdtoup",
+        "columns": null
+      },
+      "id": "Field_149jkxw",
+      "key": "projectCountry",
+      "description": "Country of the installation",
+      "searchable": true
+    }
+  ],
+  "type": "default",
+  "id": "Form_Project_Info",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.3.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.16.0"
+  },
+  "schemaVersion": 11
+}</zeebe:userTaskForm>
+    </bpmn:extensionElements>
     <bpmn:endEvent id="End_Create_project" name="End">
       <bpmn:incoming>Flow_0kj47v0</bpmn:incoming>
       <bpmn:incoming>Flow_0aihjin</bpmn:incoming>
@@ -11,15 +106,15 @@
         <zeebe:taskHeaders>
           <zeebe:header key="hold" value="yes" />
           <zeebe:header key="show" value="instruction" />
-          <zeebe:header key="output" value="projectInfo" />
+          <zeebe:header key="schema" value="Form_Project_Info" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="=startDate" target="startDate" />
           <zeebe:input source="=&#34;Fill out the project info in this form&#34;" target="instruction" />
-          <zeebe:output source="=projectInfo" target="projectInfo" />
-          <zeebe:output source="=projectInfo.name" target="name" />
+          <zeebe:output source="=schemaOutput" target="projectInfo" />
+          <zeebe:output source="=schemaOutput.projectName" target="name" />
         </zeebe:ioMapping>
-        <zeebe:formDefinition formKey="Form_Collect_project_info" />
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_3r7cofg" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1af9fmx</bpmn:incoming>
       <bpmn:outgoing>Flow_1qbsgsf</bpmn:outgoing>
@@ -34,7 +129,6 @@
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="hold" value="true" />
-          <zeebe:header key="output" value="instruction" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1sg7pf4</bpmn:incoming>

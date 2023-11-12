@@ -1,0 +1,103 @@
+{
+  "components": [
+    {
+      "label": "Project name",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_14au7cv",
+        "columns": 6
+      },
+      "id": "Field_0opye07",
+      "key": "projectName",
+      "description": "Enter the name of the project you want to create",
+      "defaultValue": "MyProject",
+      "validate": {
+        "required": true,
+        "minLength": 6
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "Factory",
+          "value": "F"
+        },
+        {
+          "label": "Product line",
+          "value": "P"
+        }
+      ],
+      "label": "Type",
+      "type": "radio",
+      "layout": {
+        "row": "Row_14au7cv",
+        "columns": null
+      },
+      "id": "Field_0x9jm2l",
+      "key": "projectType",
+      "description": "Selcct the type of the project"
+    },
+    {
+      "label": "Customer",
+      "type": "select",
+      "layout": {
+        "row": "Row_1jn7f47",
+        "columns": null
+      },
+      "id": "Field_0yrll9b",
+      "key": "projectCustomer",
+      "description": "Plant owner",
+      "searchable": true,
+      "valuesKey": "customers"
+    },
+    {
+      "values": [
+        {
+          "label": "Belgium",
+          "value": "Belgium"
+        },
+        {
+          "label": "France",
+          "value": "France"
+        },
+        {
+          "label": "Germany",
+          "value": "Germany"
+        },
+        {
+          "label": "The Netherlands",
+          "value": "The Netherlands"
+        }
+      ],
+      "label": "Country",
+      "type": "select",
+      "layout": {
+        "row": "Row_0zdtoup",
+        "columns": null
+      },
+      "id": "Field_149jkxw",
+      "key": "projectCountry",
+      "description": "Country of the installation",
+      "searchable": true
+    },
+    {
+      "action": "submit",
+      "label": "Submit",
+      "type": "button",
+      "layout": {
+        "row": "Row_1x1n6f9",
+        "columns": null
+      },
+      "id": "Field_15ggpi2"
+    }
+  ],
+  "type": "default",
+  "id": "Form_Project_Info",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.3.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.16.0"
+  },
+  "schemaVersion": 11
+}

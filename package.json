@@ -9,8 +9,13 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
+    "@bpmn-io/form-js": "^1.3.2",
+    "@comunica/query-sparql": "^2.10.0",
     "jquery": "^3.6.0",
-    "meteor-node-stubs": "^1.2.1"
+    "luxon": "^3.4.3",
+    "meteor-node-stubs": "^1.2.1",
+    "uuid": "^9.0.1",
+    "zeebe-node": "^8.2.5"
   },
   "meteor": {
     "mainModule": {

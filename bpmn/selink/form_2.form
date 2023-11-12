@@ -1,0 +1,130 @@
+{
+  "components": [
+    {
+      "subtype": "datetime",
+      "dateLabel": "Date",
+      "label": "Date time",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_13b8101",
+        "columns": null
+      },
+      "id": "Field_0wenjz9",
+      "key": "datetime_ff0h2d",
+      "timeLabel": "Time",
+      "timeSerializingFormat": "utc_offset",
+      "timeInterval": 15
+    },
+    {
+      "height": 100,
+      "label": "Spacer",
+      "type": "spacer",
+      "layout": {
+        "row": "Row_0uq5k3f",
+        "columns": 3
+      },
+      "id": "Field_0tdtn4t"
+    },
+    {
+      "components": [
+        {
+          "values": [
+            {
+              "label": "Value",
+              "value": "value"
+            },
+            {
+              "label": "Value 2",
+              "value": "value2"
+            },
+            {
+              "label": "Value 3",
+              "value": "value3"
+            },
+            {
+              "label": "Value 4",
+              "value": "value4"
+            }
+          ],
+          "label": "Tag list",
+          "type": "taglist",
+          "layout": {
+            "row": "Row_1usrobp",
+            "columns": null
+          },
+          "id": "Field_0w8njf3",
+          "key": "taglist_0fozpm"
+        },
+        {
+          "values": [
+            {
+              "label": "Value",
+              "value": "value"
+            },
+            {
+              "label": "Value 2",
+              "value": "value2"
+            }
+          ],
+          "label": "Checklist",
+          "type": "checklist",
+          "layout": {
+            "row": "Row_1usrobp",
+            "columns": null
+          },
+          "id": "Field_1i1iajn",
+          "key": "checklist_t7oe7k",
+          "validate": {
+            "required": false
+          }
+        }
+      ],
+      "showOutline": true,
+      "label": "Group",
+      "type": "group",
+      "layout": {
+        "row": "Row_1gqfoz1",
+        "columns": null
+      },
+      "id": "Field_1fsfqsd"
+    },
+    {
+      "text": "# Text",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_10yoczb",
+        "columns": null
+      },
+      "id": "Field_1ncvxoz"
+    },
+    {
+      "height": 60,
+      "label": "Spacer",
+      "type": "spacer",
+      "layout": {
+        "row": "Row_0ly796l",
+        "columns": null
+      },
+      "id": "Field_16y15il"
+    },
+    {
+      "label": "Image view",
+      "type": "image",
+      "layout": {
+        "row": "Row_0m2ruhy",
+        "columns": null
+      },
+      "id": "Field_1hrzjw3"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1o25xqb",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.3.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.16.0"
+  },
+  "schemaVersion": 11
+}

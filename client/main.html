@@ -1,29 +1,39 @@
 <head>
-  <title>mrcc</title>
+  <title>BPMN</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+
+  <link href="https://unpkg.com/@bpmn-io/form-js/dist/assets/form-js.css" rel="stylesheet">
 </head>
 
 <body>
-  <h1>MRCC PoC</h1>
+  <h1>BPMN PoC</h1>
   {{> MOB}}
 </body>
 
 <template name="MOB">
-  <p>
-  <textarea id="accesstoken" name="Access token" rows="4" cols="50">{{token}}</textarea>
-  </p>
+  <!-- <p>
+    <textarea id="accesstoken" name="Access token" rows="4" cols="50">{{token}}</textarea>
+  </p> -->
   <button id="RESET">Reset</button><br>
-  <button id="TESTUNIT">Test Unit</button><br>
+  <!-- <button id="TESTUNIT">Test Unit</button><br>
   <button id="COSPAS" class="messageButton">COSPAS SARSAT Event</button>
-  <button id="EMERGENCY">Emergency Call</button>  
+  <button id="EMERGENCY">Emergency Call</button>   -->
   <p>
-    <button id="RHS">RHS Enters AOI</button>
-    <button id="RHSGONE">RHS Leaves AOI</button>
+    {{#if launch}}
+    <button id="PROJECT">Launch Project</button>
+    <button id="PROJECTB">Launch Project boundary</button>
+    {{/if}}
+    {{#if canceloption}}
+    <button id="CANCEL">Cancel project</button>
+    {{/if}}
+    <!-- <button id="RHSGONE">RHS Leaves AOI</button> -->
   </p>
-  {{#if key}}
+  <!-- {{#if key}}
   <p>Correlation key {{key}}</p>
   <button id="positionUpdate">Update Position</button>
   <button id="endActionMOB">End Action MOB</button>
-  {{/if}}
+  {{/if}} -->
   <p></p>
   {{#each form in holdedForms}}
   <button id="{{form._id}}" class="formButton">Release {{form.name}}</button>
@@ -47,6 +57,13 @@
 <template name="FORM">
   <div id="form">
     Form {{form}}<br>
-    <pre>{{{data}}}</pre>
+    {{#if active}}
+    <pre style="white-space: pre-wrap;">{{{data}}}</pre>
+    {{/if}}
+    {{#if schema}}
+      <div id={{formId}}>
+      </div>
+      <button class="formSubmitButton">Submit</button>
+    {{/if}}
   </div>
 </template>

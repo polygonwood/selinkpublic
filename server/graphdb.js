@@ -1,0 +1,211 @@
+import { Meteor } from 'meteor/meteor';
+import { EJSON } from 'meteor/ejson';
+const { RdfStore } = require("rdf-stores");
+const { DataFactory } = require("rdf-data-factory");
+
+export const store = RdfStore.createDefault();
+
+export function InitGraphDB() {
+    const DF = new DataFactory();
+
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS001'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal("Unilin"),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS002'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal("Bors"),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS003'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal("Agristo"),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS004'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal("Sweetspot"),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS001'),
+        DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        DF.namedNode('https://selink.be/customer'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS002'),
+        DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        DF.namedNode('https://selink.be/customer'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS003'),
+        DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        DF.namedNode('https://selink.be/customer'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS004'),
+        DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        DF.namedNode('https://selink.be/customer'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS001'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ101'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS001'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ102'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS002'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ201'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS003'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ301'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS003'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ302'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS003'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ303'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS004'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ001'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS004'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ002'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/CUS004'),
+        DF.namedNode('https://selink.be/hasProject'),
+        DF.namedNode('https://selink.be/PROJ003'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ101'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Leemplatenmachine'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ102'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('MDF lijn kleine platen'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ103'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('MDF lijn grote platen'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ201'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Verwerking houtafval'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ301'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Frietenfabriek Wielsbeke'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ302'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Frietenfabriek Duinkerken'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ001'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Business Model Canvas'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ002'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Value Proposition Canvas'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ003'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('High Level Roadmap'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ101'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/BE'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ102'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/DE'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ103'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/BE'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ201'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/AU'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ301'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/BE'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ302'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/FR'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ001'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/BE'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ002'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/BE'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('https://selink.be/PROJ003'),
+        DF.namedNode('http://schema.org/addressCountry'),
+        DF.namedNode('http://eu.org/FR'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('http://eu.org/BE'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Belgium'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('http://eu.org/FR'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('France'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('http://eu.org/DE'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Germany'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('http://eu.org/UK'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('United Kingdom'),
+    ));
+    store.addQuad(DF.quad(
+        DF.namedNode('http://eu.org/AU'),
+        DF.namedNode('http://xmlns.com/foaf/0.1/name'),
+        DF.literal('Australia'),
+    ));
+}
